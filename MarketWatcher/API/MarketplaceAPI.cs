@@ -4,6 +4,6 @@ namespace MarketWatcher.API
 {
     public class MarketplaceAPI
     {
-        internal Ducky _ducky = Ducky.getInstance();
+        internal Ducky _ducky = Ducky.GetInstance();
     }
 }

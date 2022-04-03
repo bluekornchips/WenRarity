@@ -7,7 +7,6 @@ using MarketWatcher.SQL;
 using MarketWatcher.Utility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Rime.ADO.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +17,8 @@ namespace MarketWatcher.Builders
     internal class JPGStoreBuilder
     {
         private readonly JPGStoreAPI _jpgStoreAPI = JPGStoreAPI.getInstance();
-        private Ducky _ducky = Ducky.getInstance();
-        private DiscordBot _discord = DiscordBot.getInstance();
+        private Ducky _ducky = Ducky.GetInstance();
+        private DiscordBot _discord = DiscordBot.Instance;
         private RawSQLService _sqlService = RawSQLService.getInstance();
         private CollectionDataBuilder _collectionDataBuilder = CollectionDataBuilder.Instance;
 
@@ -28,12 +27,13 @@ namespace MarketWatcher.Builders
         private string _policy = "";
         private bool _validCollection = false;
 
-        public JPGStoreBuilder(string policy, string collectionName)
+        public JPGStoreBuilder(string policy, string collectionName, bool reset)
 
         {
             _activeCollectionName = collectionName;
             _activeCollectionNameUnderscore = _activeCollectionName.Replace(" ", "_");
             _policy = policy;
+            if(reset) _sqlService.DropCollection(_activeCollectionNameUnderscore);
             CreateCollection(policy, out bool valid);
             _validCollection = valid;
         }
@@ -41,18 +41,15 @@ namespace MarketWatcher.Builders
         public void Start()
         {
             int sleepTime = 60;
-            //_sqlService.DropCollection(_activeCollectionNameUnderscore); return;
             if (_validCollection)
             {
                 do
                 {
                     UpdateFloor();
-
                     Listings(_policy);
                     Sales(_policy);
                     _ducky.Info($"Sleeping for {sleepTime} seconds...");
                     Thread.Sleep(sleepTime * 1000);
-
                 } while (true);
             }
         }
@@ -64,23 +61,23 @@ namespace MarketWatcher.Builders
             {
                 //First check the database for the cached records we have.
 
-               var collection = (from coll in context.JPGStoreCollectionItems.Where(c => c.policy == policy) select coll);
+                var collection = (from coll in context.JPGStoreCollectionItems.Where(c => c.policy == policy) select coll);
                 if (collection.Count() == 0) // Empty Collection
                 {
                     //Add the policy to the JPGStoreCollectionItem table
                     //Safety check for empty strings -no cheating
                     if (_activeCollectionName != "")
-                        {
-                            context.JPGStoreCollectionItems.Add(new JPGStoreCollectionItem(policy, _activeCollectionName));
-                            context.SaveChanges();
-                            _ducky.Info($"Created new Collection: {_activeCollectionName}.");
-                            InitialLoad(policy);
-                            validConnection = true;
-                        }
-                        else
-                        {
-                            _ducky.Debug("JPGStoreBuilder", "Listings", "Entered an empty collect name for a new collection.");
-                        }
+                    {
+                        context.JPGStoreCollectionItems.Add(new JPGStoreCollectionItem(policy, _activeCollectionName));
+                        context.SaveChanges();
+                        _ducky.Info($"Created new Collection: {_activeCollectionName}.");
+                        InitialLoad(policy);
+                        validConnection = true;
+                    }
+                    else
+                    {
+                        _ducky.Debug("JPGStoreBuilder", "Listings", "Entered an empty collect name for a new collection.");
+                    }
                 }
                 else
                 {
@@ -103,12 +100,17 @@ namespace MarketWatcher.Builders
 
                     _sqlService.RetrieveMostRecent(_activeCollectionNameUnderscore, out JPGStoreListing latest);
 
-                    ListingData(latest);
+                    //ListingData(latest);
 
                     while (!updated)
                     {
                         newRecords = 0;
                         JToken deserialized = JsonConvert.DeserializeObject(_jpgStoreAPI.GET_Listings(policy, page++)) as JToken;
+                        if (deserialized == null)
+                        {
+                            updated = true;
+                            return;
+                        }
                         List<JPGStoreListing> listings = deserialized.ToObject<JPGStoreListing[]>().ToList();
                         AddCollectionInformation(listings);
                         listings.OrderBy(l => l.listed_at);
@@ -118,6 +120,7 @@ namespace MarketWatcher.Builders
                             {
                                 ++newRecords;
                                 ListingData(item);
+                                _ducky.Info($"New listing for {item.display_name}");
                                 _sqlService.AddRow(item, _activeCollectionNameUnderscore);
                                 UpdateFloor();
                             }
@@ -128,7 +131,7 @@ namespace MarketWatcher.Builders
                 }
                 catch (Exception ex)
                 {
-                    _ducky.Error("JPGStoreBuilder", "Listings", ex.Message);
+                    _ducky.Error("JPGStoreBuilder", "Listings(string policy)", ex.Message);
                 }
             }
 
@@ -150,16 +153,21 @@ namespace MarketWatcher.Builders
                     {
                         newRecords = 0;
                         JToken deserialized = (JToken)JsonConvert.DeserializeObject(_jpgStoreAPI.GET_Sales(policy, page++));
+                        if (deserialized == null)
+                        {
+                            updated = true;
+                            return;
+                        }
                         List<JPGStoreSale> listings = deserialized.ToObject<JPGStoreSale[]>().ToList();
                         AddCollectionInformation(listings);
                         listings.OrderBy(l => l.listing_id);
                         foreach (var item in listings)
                         {
-                            //if(item.listed_at > latest.listed_at)
                             if (item.listing_id > latest.listing_id)
                             {
                                 ++newRecords;
                                 SaleData(item);
+                                _ducky.Info($"New sale for {item.display_name}");
                                 _sqlService.AddRow(item, _activeCollectionNameUnderscore + "_Sales");
                                 _sqlService.Sales_Action(item, _activeCollectionNameUnderscore);
                                 UpdateFloor();
@@ -171,7 +179,7 @@ namespace MarketWatcher.Builders
                 }
                 catch (Exception ex)
                 {
-                    _ducky.Error("JPGStoreBuilder", "Sales", ex.Message);
+                    _ducky.Error("JPGStoreBuilder", "Sales(string policy)", ex.Message);
                 }
             }
         }
@@ -186,8 +194,8 @@ namespace MarketWatcher.Builders
         {
             _ducky.Info($"Initial Load for {_activeCollectionName}.");
             //If the table already exists for whatever reason, drop it.
-           _sqlService.CreateTable_Collection(_activeCollectionNameUnderscore);
-           _sqlService.CreateTable_Sales(_activeCollectionNameUnderscore + "_Sales");
+            _sqlService.CreateTable_Collection(_activeCollectionNameUnderscore);
+            _sqlService.CreateTable_Sales(_activeCollectionNameUnderscore + "_Sales");
 
             string results = "";
             int page = 0;

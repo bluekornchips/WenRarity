@@ -57,6 +57,7 @@ namespace Rime.Controller
                     else if (tokenViewModel.Token.PolicyName == "GhostWatches") db.GhostWatches.Add(((GhostWatch)tokenViewModel.Asset));
                     else if (tokenViewModel.Token.PolicyName == "Puurrties") db.Puurrties.Add(((Puurrties)tokenViewModel.Asset));
                     else if (tokenViewModel.Token.PolicyName == "Pendulum") db.Pendulums.Add(((Pendulum)tokenViewModel.Asset));
+                    else if (tokenViewModel.Token.PolicyName == "ElMatador") db.ElMatadors.Add(((ElMatador)tokenViewModel.Asset));
                     db.SaveChanges();
                     return true;
                 }

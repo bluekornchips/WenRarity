@@ -14,7 +14,6 @@ namespace Rime.Builders
 {
     public class PendulumBuilder : GenericBuilder, ITokenBuilder
     {
-
         public PendulumBuilder() : base("Pendulum", "a616aab3b18eb855b4292246bd58f9e131d7c8c25d1d1d7c88b666c4")
         {
             //DeleteTableData();
@@ -22,7 +21,7 @@ namespace Rime.Builders
             Cleaner = Clean;
             Build();
             Rarity();
-            OutputWithWeights();
+            //OutputWithWeights();
         }
 
         public Asset Clean(JToken jToken)

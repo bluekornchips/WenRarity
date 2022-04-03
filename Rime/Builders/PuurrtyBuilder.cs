@@ -20,7 +20,7 @@ namespace Rime.Builders
             Cleaner = Clean;
             Build();
             Rarity();
-            OutputWithWeights();
+            //OutputWithWeights();
             //Listings();
         }
 

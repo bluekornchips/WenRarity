@@ -1,102 +1,126 @@
-﻿using System;
+﻿using MarketWatcher.Discord;
+using MarketWatcher.Discord.Webhooks;
+using System;
 using System.Text;
 
 namespace MarketWatcher.Utility
 {
-	public class Ducky
-	{
-		private int _logLevel = 3;
-		private static readonly int _lineWidth = 60;
-		private static Ducky _ducky = null;
+    public partial class Ducky
+    {
+        private static Ducky _instance = null;
+        private static DiscordBot _discord = null;
+        private static bool _discordOutput = true;
+        private QuackType _logLevel = QuackType.DEBUG;
+        private static readonly int _lineWidth = 60;
+        private static DateTime _now = DateTime.Now;
 
-		private Ducky() { }
+        private Ducky() { }
 
-		private static void Start()
-		{
-			_ducky = new Ducky();
-			DateTime date = DateTime.Now;
+        public static void Start()
+        {
+            _instance = new Ducky();
+            _discord = DiscordBot.Instance;
+            _now = DateTime.Now;
 
-			SolidLine();
-			Sentence("Starting MarketWatcher");
-			SolidLine();
-			Sentence($" Date: {date}");
-			SolidLine();
-		}
-		public static Ducky getInstance()
-		{
-			if (_ducky == null) Start();
-			return _ducky;
-		}
+            SolidLine();
+            CenteredSentence("Starting MarketWatcher");
+            SolidLine();
+            CenteredSentence($" Date: {_now}");
+            SolidLine();
+        }
 
-		public void Info(string details)
-		{
-			Quack(details, 0);
-		}
-		public void Debug(string className, string methodName, string details)
-		{
-			string line = "";
-			line = $"[DEBUG] >>> [{className}.{methodName}] >>> {details}";
-			Quack(line, 3);
-		}
+        public static Ducky GetInstance()
+        {
+            if (_instance == null) Start();
+            return _instance;
+        }
 
-		public void Error(string className, string methodName, string details)
-		{
-			string line = "";
-			line = $"[ERROR] >>> [{className}.{methodName}] >>> {details}";
-			Quack(line, 1);
-		}
+        public void Info(string details)
+        {
+            QuackConsole(details, QuackType.INFO);
+        }
 
-		private void Quack(string line, int logLevel)
-		{
-			DateTime date = DateTime.Now;
-			if (logLevel <= _logLevel)
-			{
-				Console.WriteLine($"{date} >>> {line}");
-			}
-		}
+        public void Debug(string className, string methodName, string details)
+        {
+            string line = $"[{QuackType.DEBUG}] >>> [{className}.{methodName}] >>> {details}";
+            QuackConsole(line, QuackType.DEBUG);
+        }
 
-		private static void SolidLine()
-		{
-			StringBuilder sb = new StringBuilder();
-			int charCount = 1;
-			sb.Append("+");
-			while (charCount < _lineWidth)
-			{
-				sb.Append('-');
-				++charCount;
-			}
-			sb.Append("+");
-			Console.WriteLine(sb.ToString());
-			sb.Clear();
-		}
+        public void Error(string className, string methodName, string details)
+        {
+            string line = $"[{QuackType.ERROR}] >>> [{className}.{methodName}] >>> {details}";
+            QuackConsole(line, QuackType.ERROR);
+        }
 
-		private static void Sentence(string sentence = "")
-		{
-			int widthMinusChars = 0;
-			int halfway = 0;
-			int charCount = 1;
-			StringBuilder sb = new StringBuilder();
-			widthMinusChars = _lineWidth - sentence.Length;
-			halfway = widthMinusChars / 2;
+        public void Critical(string className, string methodName, string details)
+        {
+            string line = $"[{QuackType.CRITICAL}] >>> [{className}.{methodName}] >>> {details}";
+            QuackConsole(line, QuackType.CRITICAL);
+        }
 
-			sb.Append("|");
-			while (charCount < halfway)
-			{
-				sb.Append(" ");
-				++charCount;
-			}
-			sb.Append(sentence);
+        public void QuackDiscord(string quackType, string className, string methodName, string details)
+        {
+            if (!_discordOutput) return;
+            _now = DateTime.Now;
+            IWebhookContainer cm = new ContentMessage(quackType, _now, className, methodName, details);
+            _discord.DuckyOutput(cm);
+        }
 
-			charCount += sentence.Length;
+        private void QuackConsole(string line, QuackType quackType)
+        {
+            _now = DateTime.Now;
+            if (quackType <= _logLevel) Console.WriteLine($"{_now} >>> {line}");
+        }
 
-			while (charCount < _lineWidth)
-			{
-				sb.Append(" ");
-				++charCount;
-			}
-			sb.Append("|");
+        /// <summary>
+        /// Output a line of solid dashes.
+        /// </summary>
+        private static void SolidLine()
+        {
+            StringBuilder sb = new StringBuilder();
+            int charCount = 1;
+            sb.Append("+");
+            while (charCount < _lineWidth)
+            {
+                sb.Append('-');
+                ++charCount;
+            }
+            sb.Append("+");
+            Console.WriteLine(sb.ToString());
+            sb.Clear();
+        }
 
-			Console.WriteLine(sb.ToString());
-		}
-	}
+        /// <summary>
+        /// Output a line with centered text.
+        /// </summary>
+        /// <param name="sentence"></param>
+        private static void CenteredSentence(string sentence = "")
+        {
+            int widthMinusChars = 0;
+            int halfway = 0;
+            int charCount = 1;
+            StringBuilder sb = new StringBuilder();
+            widthMinusChars = _lineWidth - sentence.Length;
+            halfway = widthMinusChars / 2;
+
+            sb.Append("|");
+            while (charCount < halfway)
+            {
+                sb.Append(" ");
+                ++charCount;
+            }
+            sb.Append(sentence);
+
+            charCount += sentence.Length;
+
+            while (charCount < _lineWidth)
+            {
+                sb.Append(" ");
+                ++charCount;
+            }
+            sb.Append("|");
+
+            Console.WriteLine(sb.ToString());
+        }
+    }
 }

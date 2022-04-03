@@ -1,4 +1,5 @@
 ﻿using MarketWatcher.Classes.JPGStore;
+using MarketWatcher.Discord.Webhooks;
 using Rime.ADO.Classes;
 using Rime.ADO.Classes.Tokens.Rarity;
 using System;
@@ -6,10 +7,11 @@ using System.Collections.Generic;
 
 namespace MarketWatcher.Classes
 {
-    public class CollectionItemData
+    public class CollectionItemData : IWebhookContainer
     {
         public string Fingerprint { get; set; } = "";
         public int RarityRank { get; set; }
+        public int CollectionSize { get; set; }
         public double BuyMeter { get; set; }
         public Asset asset { get; set; }
         public Rarity rarity { get; set; }
@@ -48,21 +50,25 @@ namespace MarketWatcher.Classes
             }
 
             Fields(marketType, $"{marketDate} EST", false, out EmbedField date);
-            Fields("Weighted Rarity", $"{Math.Round(rarity.Weighting, 2)}", false, out EmbedField weighting);
+            Fields("Rank", $"{RarityRank}/{CollectionSize}", true, out EmbedField rank);
+            Fields("Weighting", $"{Math.Round(rarity.Weighting, 2)}", true, out EmbedField weighting);
+            Fields("URL", $"{_webHook.uri}", false, out EmbedField link);
 
             embed.fields.Add(price);
+            embed.fields.Add(rank);
             embed.fields.Add(weighting);
             embed.fields.Add(date);
+            embed.fields.Add(link);
 
             _webHook.embeds.Add(embed);
         }
 
         private void Fields(string name, string value, bool inline, out EmbedField embedField)
-        {
-            embedField = new EmbedField() { name = name, value = value, inline = inline };
-        }
+            => embedField = new EmbedField() { name = name, value = value, inline = inline };
 
-        public WebHook AsWebHook(CollectionItemData item)
+        public string GetTitle()
+            => Fingerprint;
+        public WebHook AsWebHook()
         {
             WebHookDefaults();
             WebHook_JPGStore();

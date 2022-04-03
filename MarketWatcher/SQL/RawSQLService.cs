@@ -13,7 +13,7 @@ namespace MarketWatcher.SQL
     {
 
         private static RawSQLService _instance;
-        private static Ducky _ducky = Ducky.getInstance();
+        private static Ducky _ducky = Ducky.GetInstance();
 
         private RawSQLService() { }
 
@@ -54,14 +54,16 @@ namespace MarketWatcher.SQL
                             $" [listing_id]," +
                             $" [listed_at]," +
                             $" [price_lovelace]," +
-                            $" [collection_name])" +
+                            $" [collection_name]," +
+                            $" [collection_name_underscore])" +
                             $" VALUES ('{listing.asset_id}'," +
                             $" '{listing.display_name}'," +
                             $" '{listing.tx_hash}'," +
                             $" '{listing.listing_id}'," +
                             $" '{listing.listed_at}'," +
-                            $" {listing.price_lovelace}," +
-                            $" '{listing.collection_name}');";
+                            $"  {listing.price_lovelace}," +
+                            $" '{listing.collection_name}'," +
+                            $" '{listing.collection_name_underscore}');";
                         conn.Open();
                         cmd.ExecuteNonQuery();
                         conn.Close();
@@ -96,14 +98,16 @@ namespace MarketWatcher.SQL
                             $" [listing_id]," +
                             $" [confirmed_at]," +
                             $" [price_lovelace]," +
-                            $" [collection_name])" +
+                            $" [collection_name]," +
+                            $" [collection_name_underscore])" +
                             $" VALUES ('{listing.asset_id}'," +
                             $" '{listing.display_name}'," +
                             $" '{listing.tx_hash}'," +
                             $" '{listing.listing_id}'," +
                             $" '{listing.confirmed_at}'," +
                             $" {listing.price_lovelace}," +
-                            $" '{listing.collection_name}');";
+                            $" '{listing.collection_name}'," +
+                            $" '{listing.collection_name_underscore}');";
                         conn.Open();
                         cmd.ExecuteNonQuery();
                         conn.Close();
@@ -129,7 +133,7 @@ namespace MarketWatcher.SQL
                     using (var cmd = conn.CreateCommand())
                     {
                         conn.Open();
-                        cmd.CommandText = $"DELETE FROM [dbo].[JPGStoreCollections] where [collection_name_underscore] = '{collectionName}'";
+                        cmd.CommandText = $"DELETE FROM [dbo].[JPGStoreCollectionItems] where [collection_name_underscore] = '{collectionName}'";
                         cmd.ExecuteNonQuery();
                         _ducky.Info($"Dropped collection entry for {collectionName}");
                         conn.Close();
@@ -158,7 +162,8 @@ namespace MarketWatcher.SQL
                             $" listing_id bigint," +
                             $" listed_at varchar(255)," +
                             $" price_lovelace bigint," +
-                            $" collection_name varchar(255));";
+                            $" collection_name varchar(255)," +
+                            $" collection_name_underscore varchar(255));";
                         conn.Open();
                         cmd.ExecuteNonQuery();
                         conn.Close();
@@ -189,7 +194,8 @@ namespace MarketWatcher.SQL
                             $" listing_id bigint," +
                             $" confirmed_at varchar(255)," +
                             $" price_lovelace bigint," +
-                            $" collection_name varchar(255));";
+                            $" collection_name varchar(255)," +
+                            $" collection_name_underscore varchar(255));";
                         conn.Open();
                         cmd.ExecuteNonQuery();
                         conn.Close();
@@ -217,7 +223,6 @@ namespace MarketWatcher.SQL
                         cmd.CommandText = $"DELETE FROM [dbo].[{collectionName}] WHERE [listing_id] = {sale.listing_id};";
                         cmd.ExecuteNonQuery();
                         _ducky.Info($"Confirmed sale for {collectionName}, {sale.display_name}");
-                        //discord.Sale(sale);
                         conn.Close();
                     }
                 }

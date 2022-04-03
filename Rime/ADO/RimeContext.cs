@@ -36,5 +36,7 @@ namespace Rime.ADO
         public virtual DbSet<PuurrtiesRarity> PuurrtiesRarities { get; set; }
         public virtual DbSet<Pendulum> Pendulums { get; set; }
         public virtual DbSet<PendulumRarity> PendulumRarities { get; set; }
+        public virtual DbSet<ElMatador> ElMatadors { get; set; }
+        public virtual DbSet<ElMatadorRarity> ElMatadorRarities { get; set; }
     }
 }
