@@ -1,11 +1,13 @@
 ﻿using MarketWatcher.API.JPGStore;
+using MarketWatcher.Classes;
+using MarketWatcher.Classes.JPGStore;
 using MarketWatcher.Discord;
 using MarketWatcher.EntityFramework.Context.MarketWatcher;
-using MarketWatcher.EntityFramework.JPGStore;
 using MarketWatcher.SQL;
 using MarketWatcher.Utility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Rime.ADO.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,8 @@ namespace MarketWatcher.Builders
         private Ducky _ducky = Ducky.getInstance();
         private DiscordBot _discord = DiscordBot.getInstance();
         private RawSQLService _sqlService = RawSQLService.getInstance();
+        private CollectionDataBuilder _collectionDataBuilder = CollectionDataBuilder.Instance;
+
         private string _activeCollectionName = "";
         private string _activeCollectionNameUnderscore = "";
         private string _policy = "";
@@ -99,6 +103,8 @@ namespace MarketWatcher.Builders
 
                     _sqlService.RetrieveMostRecent(_activeCollectionNameUnderscore, out JPGStoreListing latest);
 
+                    ListingData(latest);
+
                     while (!updated)
                     {
                         newRecords = 0;
@@ -111,7 +117,7 @@ namespace MarketWatcher.Builders
                             if (item.listing_id > latest.listing_id)
                             {
                                 ++newRecords;
-                                _discord.Listing(item);
+                                ListingData(item);
                                 _sqlService.AddRow(item, _activeCollectionNameUnderscore);
                                 UpdateFloor();
                             }
@@ -153,7 +159,7 @@ namespace MarketWatcher.Builders
                             if (item.listing_id > latest.listing_id)
                             {
                                 ++newRecords;
-                                _discord.Sale(item);
+                                SaleData(item);
                                 _sqlService.AddRow(item, _activeCollectionNameUnderscore + "_Sales");
                                 _sqlService.Sales_Action(item, _activeCollectionNameUnderscore);
                                 UpdateFloor();
@@ -233,5 +239,18 @@ namespace MarketWatcher.Builders
             });
         }
 
+        private void ListingData(JPGStoreListing item)
+        {
+            _collectionDataBuilder.SetAsset(item.display_name, _activeCollectionName, out CollectionItemData collectionItemData);
+            collectionItemData.jPGStoreItem = item;
+            _discord.Listing(collectionItemData);
+        }
+
+        private void SaleData(JPGStoreSale item)
+        {
+            _collectionDataBuilder.SetAsset(item.display_name, _activeCollectionName, out CollectionItemData collectionItemData);
+            collectionItemData.jPGStoreItem = item;
+            _discord.Sale(collectionItemData);
+        }
     }
 }

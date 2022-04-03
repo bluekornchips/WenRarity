@@ -1,4 +1,5 @@
-﻿using MarketWatcher.EntityFramework.JPGStore;
+﻿using MarketWatcher.Classes;
+using MarketWatcher.Classes.JPGStore;
 using System.Data.Entity;
 
 namespace MarketWatcher.EntityFramework.Context.MarketWatcher

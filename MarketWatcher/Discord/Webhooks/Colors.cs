@@ -2,7 +2,7 @@
 
 namespace MarketWatcher.Discord.Webhooks
 {
-    public static class Colors
+    public static class Colorsss
     {
         public static Dictionary<string, string> colors = new()
         {

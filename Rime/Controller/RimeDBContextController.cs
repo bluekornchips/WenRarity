@@ -24,7 +24,7 @@ namespace Rime.Controller
         private static bool AddToToken(Token token)
         {
             bool status = false;
-            using(RimeContext db = new RimeContext())
+            using (RimeContext db = new RimeContext())
             {
                 try
                 {
@@ -47,7 +47,7 @@ namespace Rime.Controller
             {
                 try
                 {
-                    if(tokenViewModel.Token.PolicyName == "Lionesss") db.Lioness.Add(((Lioness)tokenViewModel.Asset));
+                    if (tokenViewModel.Token.PolicyName == "Lionesss") db.Lioness.Add(((Lioness)tokenViewModel.Asset));
                     else if (tokenViewModel.Token.PolicyName == "ChilledKong") db.ChilledKong.Add(((ChilledKong)tokenViewModel.Asset));
                     else if (tokenViewModel.Token.PolicyName == "CheekyUnts") db.CheekyUnts.Add(((CheekyUnt)tokenViewModel.Asset));
                     else if (tokenViewModel.Token.PolicyName == "HappyHoppers") db.HappyHoppers.Add(((HappyHopper)tokenViewModel.Asset));
@@ -149,7 +149,7 @@ namespace Rime.Controller
                             while (reader.Read())
                             {
                                 rowResults = new string[rowCount];
-                                while(i < rowCount)
+                                while (i < rowCount)
                                     rowResults[i] = reader.GetValue(i++).ToString();
                                 i = 0;
                                 results.Add(rowResults);
@@ -202,5 +202,21 @@ namespace Rime.Controller
                 }
             }
         }
+
+        //public static void GetToken(string collectionName, string itemName, out Asset asset)
+        //{
+        //    asset = null;
+        //    using (RimeContext db = new RimeContext())
+        //    {
+        //        switch (collectionName)
+        //        {
+        //            case "Pendulum":
+        //                asset = db.Pendulums.Where(t => t.Name == itemName).FirstOrDefault();
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    }
+        //}
     }
 }

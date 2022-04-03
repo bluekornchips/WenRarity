@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MarketWatcher.EntityFramework.JPGStore
+namespace MarketWatcher.Classes.JPGStore
 {
     public class JPGStoreCollectionItem
     {
