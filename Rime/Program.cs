@@ -15,9 +15,9 @@ namespace Rime
 		{
 			do
 			{
-                //ITokenBuilder PuurrtyBuilder = new PuurrtiesBuilder();
+                ITokenBuilder PuurrtyBuilder = new PuurrtiesBuilder();
                 //ITokenBuilder PendulumBuilder = new PendulumBuilder();
-                ITokenBuilder ElMatadorBuilder = new ElMatadorBuilder();
+                //ITokenBuilder ElMatadorBuilder = new ElMatadorBuilder();
 
                 Logger.Info("Sleeping for 150 seconds...");
 				Thread.Sleep(150000);

@@ -10,10 +10,11 @@ namespace MarketWatcher.Classes
     public class CollectionItemData : IWebhookContainer
     {
         public string Fingerprint { get; set; } = "";
+        public string ItemName { get; set; } = "";
         public int RarityRank { get; set; }
         public int CollectionSize { get; set; }
         public double BuyMeter { get; set; }
-        public Asset asset { get; set; }
+        public Asset asset { get; set; } = new Asset();
         public Rarity rarity { get; set; }
         public JPGStoreItem jPGStoreItem { get; set; }
 
@@ -21,6 +22,7 @@ namespace MarketWatcher.Classes
 
         protected void WebHookDefaults()
         {
+            ItemName = jPGStoreItem.display_name;
             _webHook = new WebHook();
             _webHook.username = "WenRarity Bot";
         }
@@ -67,7 +69,7 @@ namespace MarketWatcher.Classes
             => embedField = new EmbedField() { name = name, value = value, inline = inline };
 
         public string GetTitle()
-            => Fingerprint;
+            => ItemName;
         public WebHook AsWebHook()
         {
             WebHookDefaults();

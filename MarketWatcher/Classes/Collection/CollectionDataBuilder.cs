@@ -23,6 +23,9 @@ namespace MarketWatcher.Classes
                 case "Puurrty Cats Society":
                     Handle_Puurrty_Cats_Society(itemName, activeCollectionName, out collectionItemData);
                     break;
+                case "ElMatador":
+                    Handle_ElMatador(itemName, activeCollectionName, out collectionItemData);
+                    break;
                 default:
                     break;
             }
@@ -59,6 +62,23 @@ namespace MarketWatcher.Classes
             collectionItemData.rarity = rarity;
             var rank = rimeContext.PuurrtiesRarities.Where(t => t.Weighting >= rarity.Weighting).Count();
             var collection = rimeContext.PuurrtiesRarities.ToList();
+            collectionItemData.RarityRank = rank;
+            collectionItemData.CollectionSize = collection.Count;
+        }
+
+        private void Handle_ElMatador(string itemName, string activeCollectionName, out CollectionItemData collectionItemData)
+        {
+            collectionItemData = new();
+            using RimeContext rimeContext = new RimeContext();
+
+            collectionItemData.asset = rimeContext.ElMatadors.Where(t => t.Name == itemName).FirstOrDefault();
+            collectionItemData.Fingerprint = collectionItemData.asset.Fingerprint;
+            var fp = collectionItemData.Fingerprint;
+
+            var rarity = rimeContext.ElMatadorRarities.Where(t => t.Fingerprint == fp).FirstOrDefault();
+            collectionItemData.rarity = rarity;
+            var rank = rimeContext.ElMatadorRarities.Where(t => t.Weighting >= rarity.Weighting).Count();
+            var collection = rimeContext.ElMatadorRarities.ToList();
             collectionItemData.RarityRank = rank;
             collectionItemData.CollectionSize = collection.Count;
         }

@@ -29,7 +29,7 @@ namespace MarketWatcher.Discord
 
         private bool _listingOutputActive = false;
         private bool _salesOutputActive = false;
-        private bool _outputActive = false;
+        private bool _outputActive = true;
 
         private DiscordBot() { }
 
@@ -114,14 +114,14 @@ namespace MarketWatcher.Discord
                 try
                 {
                     HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, _urls[url]);
-                    var jsonContent = JsonConvert.SerializeObject(item);
+                    var jsonContent = JsonConvert.SerializeObject(item.AsWebHook());
                     var data = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                     httpRequestMessage.Content = data;
                     Thread.Sleep(5000);
                     var res = await client.SendAsync(httpRequestMessage);
                     if (res.IsSuccessStatusCode)
                     {
-                        _ducky.Debug("DiscordBot", "Output(IWebhookContainer item, string url)", $"Successfully output {item.GetTitle()}");
+                        _ducky.Info($"Successfully output {item.GetTitle()}");
                     }
                     else
                     {

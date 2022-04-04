@@ -18,7 +18,7 @@ namespace Rime.Builders
             Cleaner = Clean;
             Build();
             Rarity();
-            //OutputWithWeights();
+            OutputWithWeights();
         }
 
         public Asset Clean(JToken jToken)
@@ -30,11 +30,11 @@ namespace Rime.Builders
 
                 token.Name = jToken["name"].ToString();
                 token.Image = "https://ipfs.blockfrost.dev/ipfs/" + jToken["image"].ToString().Substring(7);
-                if (jToken["Canvas"] != null) token.Canvas = jToken["Canvas"].ToString(); if (token.Canvas != "") ++token.TraitCount;
-                if (jToken["Chaqueta"] != null) token.Chaqueta = jToken["Chaqueta"].ToString(); if (token.Chaqueta != "") ++token.TraitCount;
-                if (jToken["Craneo"] != null) token.Craneo = jToken["Craneo"].ToString(); if (token.Craneo != "") ++token.TraitCount;
-                if (jToken["Polvo"] != null) token.Polvo = jToken["Polvo"].ToString(); if (token.Polvo != "") ++token.TraitCount;
-                if (jToken["Rociada"] != null) token.Rociada = jToken["Rociada"].ToString(); if (token.Rociada != "") ++token.TraitCount;
+                if (jToken["Canvas"] != null) token.Canvas = jToken["Canvas"].ToString(); if (token.Canvas != "None") ++token.TraitCount;
+                if (jToken["Chaqueta"] != null) token.Chaqueta = jToken["Chaqueta"].ToString(); if (token.Chaqueta != "None") ++token.TraitCount;
+                if (jToken["Craneo"] != null) token.Craneo = jToken["Craneo"].ToString(); if (token.Craneo != "None") ++token.TraitCount;
+                if (jToken["Polvo"] != null) token.Polvo = jToken["Polvo"].ToString(); if (token.Polvo != "None") ++token.TraitCount;
+                if (jToken["Rociada"] != null) token.Rociada = jToken["Rociada"].ToString(); if (token.Rociada != "None") ++token.TraitCount;
             }
             catch (Exception)
             {
@@ -72,11 +72,11 @@ namespace Rime.Builders
                         {
                             Fingerprint = foundToken.Fingerprint,
                             Canvas = Math.Round(1.00 / ((double)traitsList[i].Where(b => b == foundToken.Canvas).ToList().Count() / traitsList[i].Count()), 7),
-                            Chaqueta = Math.Round(1.00 / ((double)traitsList[i].Where(b => b == foundToken.Chaqueta).ToList().Count() / traitsList[i].Count()), 7),
-                            Craneo = Math.Round(1.00 / ((double)traitsList[i].Where(b => b == foundToken.Craneo).ToList().Count() / traitsList[i].Count()), 7),
-                            Polvo = Math.Round(1.00 / ((double)traitsList[i].Where(b => b == foundToken.Polvo).ToList().Count() / traitsList[i].Count()), 7),
-                            Rociada = Math.Round(1.00 / ((double)traitsList[i].Where(b => b == foundToken.Rociada).ToList().Count() / traitsList[i].Count()), 7),
-                            TraitCount = Math.Round(1.00 / ((double)traitsCount.Where(b => b == foundToken.TraitCount).ToList().Count() / traitsCount.Count()), 7),
+                            Chaqueta = Math.Round(1.00 / ((double)traitsList[++i].Where(b => b == foundToken.Chaqueta).ToList().Count() / traitsList[i].Count()), 7),
+                            Craneo = Math.Round(1.00 / ((double)traitsList[++i].Where(b => b == foundToken.Craneo).ToList().Count() / traitsList[i].Count()), 7),
+                            Polvo = Math.Round(1.00 / ((double)traitsList[++i].Where(b => b == foundToken.Polvo).ToList().Count() / traitsList[i].Count()), 7),
+                            Rociada = Math.Round(1.00 / ((double)traitsList[++i].Where(b => b == foundToken.Rociada).ToList().Count() / traitsList[i].Count()), 7),
+                            TraitCount = Math.Round(1.00 / ((double)traitsCount.Where(b => b == foundToken.TraitCount).ToList().Count() / traitsCount.Count()), 7)
                         };
                         rarityToken.Weighting =
                             rarityToken.Canvas
