@@ -62,7 +62,7 @@ namespace MarketWatcher.Utility
         {
             if (!_discordOutput) return;
             _now = DateTime.Now;
-            IWebhookContainer cm = new ContentMessage(quackType, _now, className, methodName, details);
+            IWebhookContainer cm = new ContentMessage(quackType, className, methodName, details);
             _discord.DuckyOutput(cm);
         }
 

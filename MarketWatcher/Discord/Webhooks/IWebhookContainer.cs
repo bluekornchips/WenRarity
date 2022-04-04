@@ -11,5 +11,13 @@ namespace MarketWatcher.Discord.Webhooks
     {
         public WebHook AsWebHook();
         public string GetTitle();
+        public void Defaults();
+        public void Embeds();
+    }
+
+    public class WebHookContainer
+    {
+        protected void Fields(string name, string value, bool inline, out EmbedField embedField)
+            => embedField = new EmbedField() { name = name, value = value, inline = inline };
     }
 }

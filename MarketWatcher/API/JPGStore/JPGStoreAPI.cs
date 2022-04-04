@@ -6,21 +6,28 @@ namespace MarketWatcher.API.JPGStore
     public class JPGStoreAPI : MarketplaceAPI
     {
 		private static readonly string _baseUrl = @"https://server.jpgstoreapis.com/policy/";
-		private static JPGStoreAPI _instance = getInstance();
+		private static JPGStoreAPI _instance = GetInstance();
 
-		private JPGStoreAPI()
-		{
+		private JPGStoreAPI() { }
 
-		}
-
-		public static JPGStoreAPI getInstance()
+		/// <summary>
+		/// Singleton
+		/// </summary>
+		/// <returns></returns>
+		public static JPGStoreAPI GetInstance()
 		{
 			if (_instance == null) _instance = new JPGStoreAPI();
 			return _instance;
 		}
 
 		#region GET
-		public string GET_Listings(string policy, int page)
+		/// <summary>
+		/// Get Listings
+		/// </summary>
+		/// <param name="policy"></param>
+		/// <param name="page"></param>
+		/// <returns></returns>
+		public string Listings(string policy, int page)
 		{
 			using (HttpClient httpClient = new HttpClient())
 			{
@@ -36,7 +43,13 @@ namespace MarketWatcher.API.JPGStore
 			}
 		}
 
-		public string GET_Sales(string policy, int page)
+		/// <summary>
+		/// Get Sales
+		/// </summary>
+		/// <param name="policy"></param>
+		/// <param name="page"></param>
+		/// <returns></returns>
+		public string Sales(string policy, int page)
 		{
 			using (HttpClient httpClient = new HttpClient())
 			{

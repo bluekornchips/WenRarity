@@ -1,4 +1,5 @@
 ﻿using MarketWatcher.EntityFramework.Context.Rime;
+using MarketWatcher.Utility;
 using Rime.ADO.Classes;
 using System;
 using System.Linq;
@@ -7,31 +8,55 @@ namespace MarketWatcher.Classes
 {
     public class CollectionDataBuilder
     {
-        private static CollectionDataBuilder collectionDataBuilder  = new CollectionDataBuilder();
-        public static CollectionDataBuilder Instance { get { return collectionDataBuilder; } }  
+        private static CollectionDataBuilder _instance;
+        private static Ducky _ducky = Ducky.GetInstance();
+        public static CollectionDataBuilder GetInstance()
+        {
+            if (_instance == null) _instance = new CollectionDataBuilder();
+            return _instance;
+        }
 
         private CollectionDataBuilder() { }
 
+        /// <summary>
+        /// Set asset 
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <param name="activeCollectionName"></param>
+        /// <param name="collectionItemData"></param>
         public void SetAsset(string itemName, string activeCollectionName, out CollectionItemData collectionItemData)
         {
             collectionItemData = new();
-            switch (activeCollectionName)
+            try
             {
-                case "Pendulum":
-                    Handle_Pendulum(itemName, activeCollectionName, out collectionItemData);
-                    break;
-                case "Puurrty Cats Society":
-                    Handle_Puurrty_Cats_Society(itemName, activeCollectionName, out collectionItemData);
-                    break;
-                case "ElMatador":
-                    Handle_ElMatador(itemName, activeCollectionName, out collectionItemData);
-                    break;
-                default:
-                    break;
+                switch (activeCollectionName)
+                {
+                    case "Pendulum":
+                        Handle_Pendulum(itemName, out collectionItemData);
+                        break;
+                    case "Puurrty Cats Society":
+                        Handle_Puurrty_Cats_Society(itemName, out collectionItemData);
+                        break;
+                    case "ElMatador":
+                        Handle_ElMatador(itemName, out collectionItemData);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _ducky.Critical("CollectionDataBuilder", "SetAsset", ex.Message);
+                throw;
             }
         }
 
-        private void Handle_Pendulum(string itemName, string activeCollectionName, out CollectionItemData collectionItemData)
+        /// <summary>
+        /// Connect to the related data.
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <param name="collectionItemData"></param>
+        private void Handle_Pendulum(string itemName, out CollectionItemData collectionItemData)
         {
             collectionItemData = new();
             using RimeContext rimeContext = new RimeContext();
@@ -49,7 +74,12 @@ namespace MarketWatcher.Classes
         }
 
 
-        private void Handle_Puurrty_Cats_Society(string itemName, string activeCollectionName, out CollectionItemData collectionItemData)
+        /// <summary>
+        /// Connect the related table data.
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <param name="collectionItemData"></param>
+        private void Handle_Puurrty_Cats_Society(string itemName, out CollectionItemData collectionItemData)
         {
             collectionItemData = new();
             using RimeContext rimeContext = new RimeContext();
@@ -66,7 +96,12 @@ namespace MarketWatcher.Classes
             collectionItemData.CollectionSize = collection.Count;
         }
 
-        private void Handle_ElMatador(string itemName, string activeCollectionName, out CollectionItemData collectionItemData)
+        /// <summary>
+        /// Connect the related table data.
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <param name="collectionItemData"></param>
+        private void Handle_ElMatador(string itemName, out CollectionItemData collectionItemData)
         {
             collectionItemData = new();
             using RimeContext rimeContext = new RimeContext();

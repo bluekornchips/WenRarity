@@ -17,7 +17,7 @@ namespace MarketWatcher.SQL
 
         private RawSQLService() { }
 
-        public static RawSQLService getInstance()
+        public static RawSQLService GetInstance()
         {
             if (_instance == null) _instance = new RawSQLService();
             return _instance;

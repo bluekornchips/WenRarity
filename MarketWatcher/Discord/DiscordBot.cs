@@ -14,7 +14,7 @@ namespace MarketWatcher.Discord
     public class DiscordBot
     {
         private static DiscordBot _instance = null;
-        private Ducky _ducky = Ducky.GetInstance();
+        private static Ducky _ducky = Ducky.GetInstance();
 
         private static Dictionary<string, string> _urls = new Dictionary<string, string>()
         {
@@ -33,6 +33,9 @@ namespace MarketWatcher.Discord
 
         private DiscordBot() { }
 
+        /// <summary>
+        /// Singleton
+        /// </summary>
         public static DiscordBot Instance
         {
             get
@@ -45,21 +48,21 @@ namespace MarketWatcher.Discord
         public void Listing(CollectionItemData item)
         {
             _listingQueue.Enqueue(item);
-            ListingHandler();
+            ListingHandler(); // Enters, but only outputs if able.
         }
 
         public void Sale(CollectionItemData item)
         {
             _saleQueue.Enqueue(item);
-            SaleHandler();
+            SaleHandler(); // Enters, but only outputs if able.
         }
 
         public void DuckyOutput(IWebhookContainer content)
-        {
-            Output(content, "content");
-        }
+            => Output(content, "content");
 
-
+        /// <summary>
+        /// A safety method to prevent multiple calls.
+        /// </summary>
         public void SaleHandler()
         {
             if (!_salesOutputActive)
@@ -73,6 +76,9 @@ namespace MarketWatcher.Discord
             }
         }
 
+        /// <summary>
+        /// A safety method to prevent multiple calls.
+        /// </summary>
         public void ListingHandler()
         {
             if (!_listingOutputActive)
@@ -86,6 +92,9 @@ namespace MarketWatcher.Discord
             }
         }
 
+        /// <summary>
+        /// Decerement the sale queue and output it, if enabled.
+        /// </summary>
         private void WriteSale()
         {
             var item = _saleQueue.Dequeue();
@@ -93,6 +102,9 @@ namespace MarketWatcher.Discord
             Output(item, "sales");
         }
 
+        /// <summary>
+        /// Decerement the listing queue and output it, if enabled.
+        /// </summary>
         private void WriteListing()
         {
             var item = _listingQueue.Dequeue();
@@ -109,29 +121,25 @@ namespace MarketWatcher.Discord
         /// <param name="url"></param>
         private async void Output(IWebhookContainer item, string url)
         {
-            using (HttpClient client = new())
+            using HttpClient client = new();
+            try
             {
-                try
-                {
-                    HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, _urls[url]);
-                    var jsonContent = JsonConvert.SerializeObject(item.AsWebHook());
-                    var data = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                    httpRequestMessage.Content = data;
-                    Thread.Sleep(5000);
-                    var res = await client.SendAsync(httpRequestMessage);
-                    if (res.IsSuccessStatusCode)
-                    {
-                        _ducky.Info($"Successfully output {item.GetTitle()}");
-                    }
-                    else
-                    {
-                        _ducky.Error("DiscordBot", "Output(IWebhookContainer item, string url)", $"Unable to output {item.GetTitle()}");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _ducky.Error("DiscordBot", "Output(IWebhookContainer item, string url)", ex.Message);
-                }
+                HttpRequestMessage httpRequestMessage = new(HttpMethod.Post, _urls[url]);
+
+                var jsonContent = JsonConvert.SerializeObject(item.AsWebHook());
+                var data = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                httpRequestMessage.Content = data;
+
+                Thread.Sleep(5000); // Sleep for 5 seconds to not be rate limited by Discord
+
+                var res = await client.SendAsync(httpRequestMessage);
+
+                if (res.IsSuccessStatusCode) _ducky.Info($"Successfully output {item.GetTitle()}");
+                else _ducky.Error("DiscordBot", "Output(IWebhookContainer item, string url)", $"Unable to output {item.GetTitle()}");
+            }
+            catch (Exception ex)
+            {
+                _ducky.Error("DiscordBot", "Output(IWebhookContainer item, string url)", ex.Message);
             }
         }
     }

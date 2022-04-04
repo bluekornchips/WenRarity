@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace MarketWatcher.Classes
 {
-    public class CollectionItemData : IWebhookContainer
+    public class CollectionItemData : WebHookContainer, IWebhookContainer
     {
         public string Fingerprint { get; set; } = "";
         public string ItemName { get; set; } = "";
@@ -20,14 +20,14 @@ namespace MarketWatcher.Classes
 
         protected WebHook _webHook { get; set; }
 
-        protected void WebHookDefaults()
+        public void Defaults()
         {
             ItemName = jPGStoreItem.display_name;
             _webHook = new WebHook();
-            _webHook.username = "WenRarity Bot";
+            _webHook.username = "WenRarity";
         }
 
-        private void WebHook_JPGStore()
+        public void Embeds()
         {
             _webHook.uri = new Uri($"{jPGStoreItem._url}{jPGStoreItem.asset_id}");
 
@@ -65,15 +65,12 @@ namespace MarketWatcher.Classes
             _webHook.embeds.Add(embed);
         }
 
-        private void Fields(string name, string value, bool inline, out EmbedField embedField)
-            => embedField = new EmbedField() { name = name, value = value, inline = inline };
-
         public string GetTitle()
             => ItemName;
         public WebHook AsWebHook()
         {
-            WebHookDefaults();
-            WebHook_JPGStore();
+            Defaults();
+            Embeds();
             return _webHook;
         }
     }
