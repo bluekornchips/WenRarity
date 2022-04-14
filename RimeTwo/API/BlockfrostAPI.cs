@@ -31,7 +31,7 @@ namespace RimeTwo.API
                 try
                 {
                     string json = client.GetStringAsync($"{_asset}{assetName}").Result;
-                    _assetHandler.Handle(json, out asset);
+                    _assetHandler.Parse(json, out asset);
                     //asset = JsonConvert.DeserializeObject<Asset>(json);
                     //var sample = JsonConvert.DeserializeObject(json);
                 }
@@ -79,7 +79,7 @@ namespace RimeTwo.API
         /// </summary>
         /// <param name="json"></param>
         /// <param name="builtAsset"></param>
-        public void Handle(string json, out Asset builtAsset)
+        public void Parse(string json, out Asset builtAsset)
         {
             builtAsset = JsonConvert.DeserializeObject<Asset>(json);
             JObject deserialized = (JObject)JsonConvert.DeserializeObject(json);
@@ -101,9 +101,6 @@ namespace RimeTwo.API
                     if (valid) builtAsset.onchain_metadata.attributes.Add(property.Name, property.Value.ToString());
                 }
             }
-            Console.WriteLine();
-
-
 
 
             //var onchain_metadata = deserialized.Properties().Where(v => v.Name == "onchain_metadata").First().Children();
@@ -148,7 +145,6 @@ namespace RimeTwo.API
             //        throw;
             //    }
             //}
-            Console.WriteLine();
             //items = JsonConvert.DeserializeObject<List<BlockfrostPolicyItem>>(json);
         }
 

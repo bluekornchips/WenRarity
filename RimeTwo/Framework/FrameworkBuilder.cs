@@ -16,31 +16,29 @@ namespace RimeTwo
             //Console.WriteLine("Enter Policy ID: ");
             //string policyId = Console.ReadLine();
             string policyId = "3f00d83452b4ead45cf5e0ca811fe8da561dfc45a5e414c88c4d8759";
-            CreateNew(policyId);
 
-            Console.WriteLine("Enter Collection Name: ");
-            string collectionName = Console.ReadLine();
+            //Console.WriteLine("Enter Collection Name: ");
+            //string collectionName = Console.ReadLine();
+            string collectionName = "KBot";
+            CreateNew(policyId, collectionName);
             //BuildAttributes(out List<string[]> attributes);
             //_rimeWriter.Build(collectionName[0].ToString().ToUpper() + collectionName.Substring(1), attributes);
         }
 
-        private void CreateNew(string policyId)
+        private void CreateNew(string policyId, string className)
         {
-            bool getPolicy = true;
             int page = 0;
-            do
+            // Check the policy
+            blockfrostAPI.Assets_ByPolicy(policyId, page, out List<BlockfrostPolicyItem> items);
+            if (items != null)
             {
-                // Check the policy
-                blockfrostAPI.Assets_ByPolicy(policyId, ++page, out List<BlockfrostPolicyItem> items);
-                if(items != null)
-                {
-                    // Use the first item in sequence that has a quantity greater than 0.
-                    int index = 0;
-                    while (items[index].Quantity == 0) ++index;
-                    BlockfrostPolicyItem item = items[index];
-                    blockfrostAPI.Asset_One(item.Asset, out Asset asset);
-                }
-            } while (getPolicy);
+                // Use the first item in sequence that has a quantity greater than 0.
+                int index = 0;
+                while (items[index].Quantity == 0) ++index;
+                BlockfrostPolicyItem item = items[index];
+                blockfrostAPI.Asset_One(item.Asset, out Asset asset);
+                _rimeWriter.Build(className, asset);
+            }
         }
 
         //private void BuildAttributes(out List<string[]> attributes)

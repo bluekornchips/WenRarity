@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -15,28 +14,33 @@ namespace RimeTwo
             Start();
         }
 
-        public void Build(string className, List<string[]> attributes)
+        public void Build(string className, Asset asset)
         {
             StringBuilder sb = new StringBuilder();
+
             sb.Append("namespace RimeTwo");
             sb.Append("\n{");
-            sb.Append($"\n\tpublic class {className}");
+            sb.Append($"\n\tpublic class {className} : Asset");
             sb.Append("\n\t{");
-            foreach (string[] attribute in attributes)
+
+            foreach (var attribute in asset.onchain_metadata.attributes)
             {
-                string attributeName = attribute[1][0].ToString().ToUpper() + attribute[1].Substring(1) ;
-                sb.Append($"\n\t\tpublic { attribute[0]} {attributeName}");
-                sb.Append(" {get; set;}");
+                string attributeName = attribute.Value.ToString().ToUpper() + attribute.Value.Substring(1);
+                sb.Append($"\n\t\tpublic string { attribute.Key}");
+                sb.Append(" { get; set; }");
             }
+
             sb.Append($"\n\t\tpublic {className}()");
             sb.Append("{ }");
             sb.Append("\n\t}");
             sb.Append("\n}");
+
             Write(className, sb.ToString());
         }
 
         public void Write(string className, string classString)
         {
+            if (File.Exists($"${DataDir}{className}.cs")) File.Delete(DataDir);
             using (StreamWriter sw = new StreamWriter(DataDir + $"{className}.cs"))
             {
                 sw.WriteLine(classString);
