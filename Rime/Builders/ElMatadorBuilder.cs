@@ -36,9 +36,9 @@ namespace Rime.Builders
                 if (jToken["Polvo"] != null) token.Polvo = jToken["Polvo"].ToString(); if (token.Polvo != "None") ++token.TraitCount;
                 if (jToken["Rociada"] != null) token.Rociada = jToken["Rociada"].ToString(); if (token.Rociada != "None") ++token.TraitCount;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                throw;
             }
             return token;
         }

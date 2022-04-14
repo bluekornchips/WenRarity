@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WenRarity", "WenRarity\WenR
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarketWatcher", "MarketWatcher\MarketWatcher.csproj", "{17A424CD-BFE0-416E-BDEE-F243305084F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rime", "Rime\Rime.csproj", "{34EC3422-65B6-40EC-991A-6BBEFABC2D15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rime", "Rime\Rime.csproj", "{34EC3422-65B6-40EC-991A-6BBEFABC2D15}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimeTwo", "RimeTwo\RimeTwo.csproj", "{2820E5CA-553B-45B8-92BC-E4C8BEE77809}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{34EC3422-65B6-40EC-991A-6BBEFABC2D15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34EC3422-65B6-40EC-991A-6BBEFABC2D15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34EC3422-65B6-40EC-991A-6BBEFABC2D15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2820E5CA-553B-45B8-92BC-E4C8BEE77809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2820E5CA-553B-45B8-92BC-E4C8BEE77809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2820E5CA-553B-45B8-92BC-E4C8BEE77809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2820E5CA-553B-45B8-92BC-E4C8BEE77809}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
