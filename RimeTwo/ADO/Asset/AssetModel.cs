@@ -1,6 +1,6 @@
-﻿namespace RimeTwo
+﻿namespace RimeTwo.ADO.Asset
 {
-    public class Asset
+    public class AssetModel
     {
         // CIP721 Standard
         // https://github.com/cardano-foundation/CIPs/blob/8b1f2f0900d81d6233e9805442c2b42aa1779d2d/CIP-NFTMetadataStandard.md
@@ -12,6 +12,6 @@
         public string initial_mint_tx_hash { get; set; }
         public string mint_or_burn_count { get; set; }
         public string metadata { get; set; }
-        public OnChainMetaData onchain_metadata { get; set; }
+        public OnChainMetaDataModel onchain_metadata { get; set; }
     }
 }

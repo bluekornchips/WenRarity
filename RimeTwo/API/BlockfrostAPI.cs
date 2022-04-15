@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RimeTwo.Util;
+using RimeTwo.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace RimeTwo.API
         private BlockfrostAPI() { }
 
         #region GET
-        public void Asset_One(string assetName, out Asset asset)
+        public void Asset_One(string assetName, out AssetViewModel asset)
         {
             asset = new();
             using (HttpClient client = new())
@@ -32,8 +32,6 @@ namespace RimeTwo.API
                 {
                     string json = client.GetStringAsync($"{_asset}{assetName}").Result;
                     _assetHandler.Parse(json, out asset);
-                    //asset = JsonConvert.DeserializeObject<Asset>(json);
-                    //var sample = JsonConvert.DeserializeObject(json);
                 }
                 catch (Exception ex)
                 {
@@ -61,105 +59,5 @@ namespace RimeTwo.API
             }
         }
         #endregion
-    }
-    public class BlockfrostPolicyItem
-    {
-        public string Asset { get; set; }
-        public int Quantity { get; set; }
-    }
-
-    public class AssetHandler
-    {
-        private static AssetHandler instance;
-        public static AssetHandler Instance => instance ?? (instance = new AssetHandler());
-        private AssetHandler() { }
-
-        /// <summary>
-        /// CIP 25 Standard - https://cips.cardano.org/cips/cip25/
-        /// </summary>
-        /// <param name="json"></param>
-        /// <param name="builtAsset"></param>
-        public void Parse(string json, out Asset builtAsset)
-        {
-            builtAsset = JsonConvert.DeserializeObject<Asset>(json);
-            JObject deserialized = (JObject)JsonConvert.DeserializeObject(json);
-
-            builtAsset = JsonConvert.DeserializeObject<Asset>(json);
-            //var asset = deserialized.GetValue("asset");
-            //var policy_id = deserialized.GetValue("policy_id");
-            //var asset_name = deserialized.GetValue("asset_name");
-            //var fingerprint = deserialized.GetValue("fingerprint");
-
-            var onchain_metadata = deserialized.GetValue("onchain_metadata");
-
-            if (onchain_metadata != null)
-            {
-                foreach (JToken child in onchain_metadata.Children())
-                {
-                    var property = (JProperty)child;
-                    AttributeHelper(property, out bool valid);
-                    if (valid) builtAsset.onchain_metadata.attributes.Add(property.Name, property.Value.ToString());
-                }
-            }
-
-
-            //var onchain_metadata = deserialized.Properties().Where(v => v.Name == "onchain_metadata").First().Children();
-
-            //var children = onchain_metadata.First().Children();
-
-            //Dictionary<string, object> attributes = new();
-
-
-            //foreach (var item in children)
-            //{
-            //    try
-            //    {
-            //        JProperty property = (JProperty)item;
-
-            //        // Check if the attribute contains children.
-            //        var propertyChildren = property.Children();
-
-            //        var newItem = item;
-            //        var itemChildren = newItem.First();
-            //        while(itemChildren.Children().Count() > 0)
-            //        {
-            //            itemChildren = itemChildren.First();
-            //        }
-
-            //        //while(newItem.Children().Count() <= 1)
-            //        //{
-            //        //    if(newItem.Children().Count() == 1)
-            //        //    {
-            //        //        newItem = newItem.First;
-            //        //    }
-            //        //    Console.WriteLine();
-            //        //}
-            //        //if(item.Children().Count() > 1)
-            //        //{
-            //            //var first = item.First().First().Children();
-            //        //}
-            //    }
-            //    catch (Exception)
-            //    {
-
-            //        throw;
-            //    }
-            //}
-            //items = JsonConvert.DeserializeObject<List<BlockfrostPolicyItem>>(json);
-        }
-
-        private void AttributeHelper(JProperty prop, out bool valid)
-        {
-            valid = false;
-            string lower = prop.Name.ToLower();
-            if (lower != "name"
-                && lower != "mediatype"
-                && lower != "image"
-                && lower != "description"
-                && lower != "files")
-            {
-                valid = true;
-            }
-        }
     }
 }

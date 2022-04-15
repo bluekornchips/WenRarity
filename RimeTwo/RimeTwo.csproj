@@ -6,11 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Asset\Token\" />
+    <Folder Include="ADO\Asset\Token\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>
