@@ -1,27 +1,31 @@
-﻿using BlockfrostQuery.Util;
-using Rime.Builders;
-using System.Threading;
+﻿using Rime.Builders.CollectionBuilder;
+using Rime.Utils;
+using Rime.ViewModels.Collection;
 
-namespace Rime
+namespace RimeTwo
 {
-    public class Program
+    internal class Program
     {
+        private static Ducky _ducky;
         static void Main(string[] args)
         {
-            Builders();
+            Setup();
+
+            FrameworkBuilder builder = FrameworkBuilder.Instance;
+
+            if(builder.Build(out CollectionViewModel collection))
+            {
+                _ducky.Info("Successfully wrote new Framework Items.");
+                _ducky.Info("\n\nUPDATE DATABASE\n\n");
+                return;
+            }
+            CollectionBuilder collectionBuilder = CollectionBuilder.Instance;
+            collectionBuilder.Build(collection);
         }
 
-        static void Builders()
+        static void Setup()
         {
-            //ITokenBuilder ElMatadorBuilder = new ElMatadorBuilder();
-            ITokenBuilder PuurrtyBuilder = new PuurrtiesBuilder();
-            //ITokenBuilder PendulumBuilder = new PendulumBuilder();
-            //do
-            //{
-
-            //             Logger.Info("Sleeping for 150 seconds...");
-            //	Thread.Sleep(150000);
-            //} while (true);
+            _ducky = Ducky.Instance;
         }
     }
 }

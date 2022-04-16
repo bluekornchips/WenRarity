@@ -1,19 +1,16 @@
 ﻿namespace Rime.Migrations
 {
-    using System;
-    using System.Data.Entity;
+    using Rime.ADO;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Rime.ADO.RimeContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<RimeDb>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            ContextKey = "Rime.ADO.RimeContext";
         }
 
-        protected override void Seed(Rime.ADO.RimeContext context)
+        protected override void Seed(RimeDb context)
         {
             //  This method will be called after migrating to the latest version.
 
