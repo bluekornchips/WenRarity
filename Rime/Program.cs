@@ -1,5 +1,5 @@
 ﻿using Rime.Builders.CollectionBuilder;
-using Rime.Utils;
+using WenRarityLibrary;
 using Rime.ViewModels.Collection;
 
 namespace RimeTwo

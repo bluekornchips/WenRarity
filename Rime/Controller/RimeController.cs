@@ -1,5 +1,5 @@
 ﻿using Rime.ADO;
-using Rime.Utils;
+using WenRarityLibrary;
 
 namespace Rime.Controller
 {

@@ -1,6 +1,6 @@
 ﻿using Rime.API;
 using Rime.Controller;
-using Rime.Utils;
+using WenRarityLibrary;
 using Rime.ViewModels.Asset;
 using Rime.ViewModels.Collection;
 

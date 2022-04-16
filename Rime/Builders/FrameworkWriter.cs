@@ -1,4 +1,4 @@
-﻿using Rime.Utils;
+﻿using WenRarityLibrary;
 using Rime.ViewModels.Asset;
 using System.Text;
 

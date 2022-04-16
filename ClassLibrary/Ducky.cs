@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Rime.Utils
+namespace WenRarityLibrary
 {
     public class Ducky
     {

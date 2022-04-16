@@ -1,7 +1,7 @@
 ﻿using Rime.ADO;
 using Rime.API;
 using Rime.Controller;
-using Rime.Utils;
+using WenRarityLibrary;
 using Rime.ViewModels.Asset;
 using Rime.ViewModels.Collection;
 
@@ -23,7 +23,7 @@ namespace Rime.Builders.CollectionBuilder
         {
             _collection = collection;
 
-            _rimeController.Reset(_collection.AsCollection());
+            //_rimeController.Reset(_collection.AsCollection());
 
             bool built = false;
             bool hasAssets = true;
