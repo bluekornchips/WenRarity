@@ -50,6 +50,11 @@ namespace Rime.ViewModels.Asset
                 throw new NotImplementedException();
             }
 
+            public override void AttributeHandler()
+            {
+                throw new NotImplementedException();
+            }
+
             public override void Get(out Dictionary<string, OnChainMetaData> metadata)
             {
                 throw new NotImplementedException();

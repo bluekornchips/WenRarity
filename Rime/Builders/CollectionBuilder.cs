@@ -5,7 +5,7 @@ using WenRarityLibrary;
 using Rime.ViewModels.Asset;
 using Rime.ViewModels.Collection;
 
-namespace Rime.Builders.CollectionBuilder
+namespace Rime.Builders
 {
     internal class CollectionBuilder
     {
@@ -23,13 +23,14 @@ namespace Rime.Builders.CollectionBuilder
         {
             _collection = collection;
 
-            //_rimeController.Reset(_collection.AsCollection());
+            _rimeController.Reset(_collection.AsCollection());
 
             bool built = false;
             bool hasAssets = true;
             bool gotRecords = false;
             int page = 1;
             int newAssets = 0;
+            _ducky.Info("Loading Collection data...");
             do
             {
                 blockfrostAPI.Assets_ByPolicy(_collection, page++, out List<BlockfrostPolicyItem> fullItems);
@@ -89,6 +90,7 @@ namespace Rime.Builders.CollectionBuilder
             _onChainMetaData.Add(item.Asset, avm.onchain_metadata.Model());
             avm.Add();
             avm.onchain_metadata.Add();
+            avm.onchain_metadata.AttributeHandler();
         }
 
         private bool LocalJson(CollectionViewModel cvm, string asset, out AssetViewModel avm)

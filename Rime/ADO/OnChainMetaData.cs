@@ -14,4 +14,13 @@ namespace Rime.ADO
         public string policy_id { get; set; }
         public string asset { get; set; }
     }
+
+    public partial class OnChainMetaDataRarity
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+        public string asset { get; set; }
+
+    }
 }

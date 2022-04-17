@@ -1,4 +1,5 @@
-﻿using WenRarityLibrary;
+﻿using Rarity.Builders;
+using WenRarityLibrary;
 
 namespace Rarity
 {
@@ -7,12 +8,8 @@ namespace Rarity
         private static Ducky _ducky = Ducky.Instance;
         static void Main(string[] args)
         {
-            Start();
-        }
-
-        static void Start()
-        {
-            _ducky.Start();
+            RarityBuilder rb = RarityBuilder.Instance;
+            rb.Build();
         }
     }
 }

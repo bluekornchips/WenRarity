@@ -2,7 +2,7 @@
 using Rime.ViewModels.Asset;
 using System.Text;
 
-namespace Rime.Builders.CollectionBuilder
+namespace Rime.Builders
 {
     internal class FrameworkWriter
     {
@@ -184,8 +184,8 @@ namespace Rime.Builders.CollectionBuilder
         #region Write
         public void WriteViewModel(string className, string classString)
         {
-            if (File.Exists($"${DirVM}{className}.cs")) File.Delete(DirVM);
-            using (StreamWriter sw = new StreamWriter(DirVM + $"{className}.cs"))
+            //if (File.Exists($"${DirVM}\\{className}\\{className}.cs")) File.Delete(DirVM);
+            using (StreamWriter sw = new StreamWriter(DirVM + $"\\{className}\\{className}.cs"))
             {
                 sw.WriteLine(classString);
             }
@@ -194,8 +194,8 @@ namespace Rime.Builders.CollectionBuilder
 
         public void WriteModel(string className, string classString)
         {
-            if (File.Exists($"${DirADOToken}{className}.cs")) File.Delete(DirADOToken);
-            using (StreamWriter sw = new(DirADOToken + $"{className}.cs"))
+            //if (File.Exists($"${DirADOToken}{className}.cs")) File.Delete(DirADOToken);
+            using (StreamWriter sw = new(DirADOToken + $"\\{className}\\{className}.cs"))
             {
                 sw.WriteLine(classString);
             }

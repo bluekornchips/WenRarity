@@ -18,5 +18,6 @@ namespace Rime.ViewModels.Asset
         public abstract void Add();
         public abstract OnChainMetaData Model();
         public abstract void Get(out Dictionary<string, OnChainMetaData> metadata);
+        public abstract void AttributeHandler();
     }
 }

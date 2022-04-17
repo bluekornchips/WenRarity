@@ -15,7 +15,7 @@ namespace WenRarityLibrary
             Start();
         }
 
-        public void Start()
+        private void Start()
         {
             _now = DateTime.Now;
 

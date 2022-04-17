@@ -1,6 +1,7 @@
-﻿using Rime.Builders.CollectionBuilder;
+﻿using Rime.Builders;
 using WenRarityLibrary;
 using Rime.ViewModels.Collection;
+using Rime.Builders;
 
 namespace RimeTwo
 {
@@ -19,8 +20,12 @@ namespace RimeTwo
                 _ducky.Info("\n\nUPDATE DATABASE\n\n");
                 return;
             }
+
             CollectionBuilder collectionBuilder = CollectionBuilder.Instance;
             collectionBuilder.Build(collection);
+
+            StatsBuilder sb = StatsBuilder.Instance;
+            sb.Build(collection);
         }
 
         static void Setup()

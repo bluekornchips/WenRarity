@@ -57,5 +57,10 @@ namespace Rime.ViewModels.Asset.Token
 				_ducky.Error("GrandmasterAdventurerViewModel", "Get()", ex.Message);
 			}
 		}
-	}
+
+        public override void AttributeHandler()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

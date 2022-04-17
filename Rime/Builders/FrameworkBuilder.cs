@@ -4,7 +4,7 @@ using WenRarityLibrary;
 using Rime.ViewModels.Asset;
 using Rime.ViewModels.Collection;
 
-namespace Rime.Builders.CollectionBuilder
+namespace Rime.Builders
 {
     internal class FrameworkBuilder
     {
@@ -26,9 +26,9 @@ namespace Rime.Builders.CollectionBuilder
             //Console.WriteLine("Enter Collection Name: ");
             //string collectionName = Console.ReadLine();
 
-            //_collection.PolicyId = "3f00d83452b4ead45cf5e0ca811fe8da561dfc45a5e414c88c4d8759";
-            //_collection.Name = "KBot";
-            //_collection.NamePlural = "KBots";
+            _collection.PolicyId = "3f00d83452b4ead45cf5e0ca811fe8da561dfc45a5e414c88c4d8759";
+            _collection.Name = "KBot";
+            _collection.NamePlural = "KBots";
 
             //_collection.PolicyId = "a616aab3b18eb855b4292246bd58f9e131d7c8c25d1d1d7c88b666c4";
             //_collection.Name = "Pendulum";
@@ -38,9 +38,9 @@ namespace Rime.Builders.CollectionBuilder
             //_collection.Name = "ClumsyGhosts";
             //_collection.NamePlural = "ClumsyGhosts";
 
-            _collection.PolicyId = "95d9a98c2f7999a3d5e0f4d795cb1333837c09eb0f24835cd2ce954c";
-            _collection.Name = "GrandmasterAdventurer";
-            _collection.NamePlural = "GrandmasterAdventurers";
+            //_collection.PolicyId = "95d9a98c2f7999a3d5e0f4d795cb1333837c09eb0f24835cd2ce954c";
+            //_collection.Name = "GrandmasterAdventurer";
+            //_collection.NamePlural = "GrandmasterAdventurers";
 
             CreateNew(out bool createdNew);
             cvm = _collection;
