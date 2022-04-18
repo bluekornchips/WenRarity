@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WenRarityLibrary.ADO.Blockfrost;
 using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData;
@@ -18,7 +18,7 @@ namespace WenRarityLibrary.Builders
         /// CIP 25 Standard - https://cips.cardano.org/cips/cip25/
         /// </summary>
         /// <param name="input"></param>
-        public void AsCIPStandardModel(string input, Type type, out OnChainMetaDataViewModel built)
+        public void AsCIPStandardModel(string input, string type, out OnChainMetaDataViewModel built)
         {
             built = new OnChainMetaDataViewModel();
             if (input == "") return;
@@ -26,7 +26,14 @@ namespace WenRarityLibrary.Builders
             JObject deserialized = JsonConvert.DeserializeObject(input) as JObject;
             BlockfrostAsset bfAsset = JsonConvert.DeserializeObject<BlockfrostAsset>(input);
             JToken onchain_metadata = deserialized.GetValue("onchain_metadata");
+            var attributes = onchain_metadata["attributes"];
             built.model = GenerateOnChainMetaData(type, onchain_metadata.ToString());
+
+            if(built.model.GetType().Name == "DefaultOnChainMetaData")
+            {
+                built.model.attributes = attributes.ToObject<Dictionary<string, string>>();
+            }
+
             if (onchain_metadata == null) return;
             foreach (JToken child in onchain_metadata.Children())
             {
@@ -75,6 +82,7 @@ namespace WenRarityLibrary.Builders
 
         private string AttributeCleaner(string value)
         {
+            value.Replace(" ", "");
             switch (value)
             {
                 case "class": return "classAttr";
@@ -82,24 +90,44 @@ namespace WenRarityLibrary.Builders
             }
         }
 
-        public OnChainMetaData GenerateOnChainMetaData(Type type, string json)
+        public OnChainMetaData GenerateOnChainMetaData(string type, string json)
         {
-            switch (type.Name)
+            switch (type)
             {
-                // ##_:switch+
-                case "KBot":return HandleKBot(json);
-                // ##_:switch-
+                //##_:switch+
+				case "DeluxeBotOGCollection":return HandleDeluxeBotOGCollection(json);
+				case "KBot":return HandleKBot(json);
                 default: return new DefaultOnChainMetaData();
             }
         }
 
-        // ##_:handle+
-        private KBot HandleKBot(string json)
-        {
-            KBot kbot = JsonConvert.DeserializeObject<KBot>(json);
-            kbot.Pet = kbot.attributes.GetValueOrDefault("Pet");
-            return kbot;
-        }
-        //##_:handle-
+        //##_:handle+
+		private DeluxeBotOGCollection HandleDeluxeBotOGCollection(string json)
+		{
+			DeluxeBotOGCollection model = JsonConvert.DeserializeObject<DeluxeBotOGCollection>(json);
+			model.Hat = model.attributes.GetValueOrDefault("Hat");
+			model.Face = model.attributes.GetValueOrDefault("Face");
+			model.Pose = model.attributes.GetValueOrDefault("Pose");
+			model.BackDrop = model.attributes.GetValueOrDefault("Back Drop");
+			model.BodyPaint = model.attributes.GetValueOrDefault("Body Paint");
+			model.FacePlate = model.attributes.GetValueOrDefault("Face Plate");
+			return model;
+		}
+
+		private KBot HandleKBot(string json)
+		{
+			KBot model = JsonConvert.DeserializeObject<KBot>(json);
+			model.Pet = model.attributes.GetValueOrDefault("Pet");
+			return model;
+		}
     }
 }
+
+
+
+
+
+
+
+
+

@@ -5,36 +5,10 @@ using WenRarityLibrary.Builders;
 using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData;
 using WenRarityLibrary.API;
 using WenRarityLibrary.ViewModels;
-using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData.Token;
-using Rime.ADO;
 using WenRarityLibrary;
 
 namespace Blockfrost.Builder
 {
-    public class OnChainMetaDataModelHandler
-    {
-        private static OnChainMetaDataModelHandler instance;
-        public static OnChainMetaDataModelHandler Instance => instance ?? (instance = new OnChainMetaDataModelHandler());
-        private OnChainMetaDataModelHandler() { }
-        private static Ducky _ducky = Ducky.Instance;
-
-        public void Add(KBot item)
-        {
-            using BlockfrostADO context = new();
-            var trans = context.Database.BeginTransaction();
-            try
-            {
-                context.KBots.Add(item);
-                trans.Commit();
-                context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                trans.Rollback();
-                _ducky.Error("OnChainMetaDataModelHandler", "Add(KBot)", ex.Message);
-            }
-        }
-    }
 
     public class BlockfrostBuilder
     {
@@ -49,22 +23,41 @@ namespace Blockfrost.Builder
         private static WenRarityFrameworkBuilder frameworkBuilder = WenRarityFrameworkBuilder.Instance;
 
         private Dictionary<string, OnChainMetaData> _assets = new();
-        private Type _type = typeof(DefaultOnChainMetaData);
+        private string _type = "DefaultOnChainMetaData";
         private Collection _collection = new Collection();
 
         public void Build()
         {
+            //_collection = new Collection()
+            //{
+            //    PolicyId = "3f00d83452b4ead45cf5e0ca811fe8da561dfc45a5e414c88c4d8759",
+            //    Name = "KBot",
+            //    DatabaseName = "KBot",
+            //    RealName = "KBot"
+            //};
+
             _collection = new Collection()
             {
-                PolicyId = "3f00d83452b4ead45cf5e0ca811fe8da561dfc45a5e414c88c4d8759",
-                Name = "KBot",
-                DatabaseName = "KBots",
-                RealName = "KBot"
+                PolicyId = "b65ce524203b7a7d48b55ff037c847c5ec8c185cd3bdb7abad0a02d4",
+                Name = "DeluxeBotOGCollection",
+                DatabaseName = "DeluxeBotOGCollection",
+                RealName = "DeluxeBot OG Collection"
             };
-            _type = typeof(KBot);
 
-            //if (!_blockfrostController.CollectionExists(_collection.PolicyId)) NewCollection();
-            NewCollection();
+            _type = _collection.Name;
+
+            if (!_blockfrostController.CollectionExists(_collection.PolicyId))
+            {
+                NewCollection();
+                return;
+            }
+
+            bool reset = false;
+            if (reset)
+            {
+                _blockfrostController.Delete(_collection);
+                _blockfrostController.AddCollection(_collection);
+            }
 
             ExisitingRecords();
             RetrieveJson();
@@ -72,18 +65,24 @@ namespace Blockfrost.Builder
 
         private void NewCollection()
         {
+            _blockfrostController.AddCollection(_collection);
             _blockfrostAPI.Assets_ByPolicy(_collection.PolicyId, 1, out string policyJson);
+            
             _jsonBuilder.AsBlockfrostPolicyItems(policyJson, out List<BlockfrostPolicyItem> policyItems);
+            
             policyItems = policyItems.Where(i => i.Quantity > 0).ToList();
+            
             BlockfrostPolicyItem item = policyItems.FirstOrDefault();
             _blockfrostAPI.Asset(item.Asset, out string assetJson);
             _jsonBuilder.AsCIPStandardModel(assetJson, _type, out OnChainMetaDataViewModel vm);
-            frameworkBuilder.Build(_collection, vm);
+
+            frameworkBuilder.CreateToken(_collection, vm);
+            if (!frameworkBuilder.Build(_collection, vm, out string status)) throw new Exception(status);
         }
 
         public void ExisitingRecords()
         {
-            _blockfrostController.GetOnChainMetaData(out _assets);
+            _blockfrostController.GetOnChainMetaData(_collection.Name, out _assets);
         }
 
         public bool ExistingJson(string asset, out string json)
@@ -101,9 +100,6 @@ namespace Blockfrost.Builder
 
             int page = 0;
             int matchCount = 0;
-
-            //_blockfrostController.Reset(_collection);
-            //_blockfrostController.AddCollection(_collection);
 
             do
             {

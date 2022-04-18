@@ -37,7 +37,5 @@ namespace WenRarityLibrary.ADO.Rime.Models.OnChainMetaData
         public Dictionary<string, string> attributes { get; set; }
     }
 
-    public class DefaultOnChainMetaData : OnChainMetaData
-    { 
-    }
+    public class DefaultOnChainMetaData : OnChainMetaData { }
 }

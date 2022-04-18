@@ -11,7 +11,8 @@ namespace Rime.ADO
         public virtual DbSet<BlockfrostItemJson> BlockfrostItemJson { get; set; }
         public virtual DbSet<Collection> Collection { get; set; }
         //##_:tokens+
-        public virtual DbSet<KBot> KBots { get; set; }
+		public virtual DbSet<DeluxeBotOGCollection> DeluxeBotOGCollection { get; set; }
+		public virtual DbSet<KBot> KBot { get; set; }
         //##_:tokens-
 
         //public virtual DbSet<BlockfrostJson> BlockfrostJson { get; set; }
@@ -23,4 +24,9 @@ namespace Rime.ADO
         // ##_:
     }
 }
+
+
+
+
+
 

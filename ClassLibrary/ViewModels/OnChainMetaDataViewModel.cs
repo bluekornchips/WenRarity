@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,14 +23,20 @@ namespace WenRarityLibrary.ViewModels
 
         public OnChainMetaData model { get; set; }
 
-        public dynamic AsModel(Type type)
+        public dynamic AsModel(string type)
         {
-            switch (type.Name)
+            switch (type)
             {
                 //##_:
-                case "KBot": return (KBot)model;
+				case "DeluxeBotOGCollection": return (DeluxeBotOGCollection)model;
+				case "KBot": return (KBot)model;
                 default: return model;
             }
         }
     }
 }
+
+
+
+
+

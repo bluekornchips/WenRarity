@@ -1,4 +1,4 @@
-﻿using Rime.ADO;
+using Rime.ADO;
 using WenRarityLibrary;
 using WenRarityLibrary.ADO.Blockfrost;
 using WenRarityLibrary.ADO.Rime.Models;
@@ -39,25 +39,6 @@ namespace Blockfrost.Controller
         {
             using BlockfrostADO context = new();
             return context.Collection.Where(i => i.PolicyId == policyId).Any();
-        }
-
-        public void GetOnChainMetaData(out Dictionary<string, OnChainMetaData> items)
-        {
-            items = new Dictionary<string, OnChainMetaData>();
-            using BlockfrostADO context = new();
-            try
-            {
-                var a = context.KBots.ToList();
-                foreach (var item in a)
-                {
-                    items.Add(item.asset, item);
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
         }
 
         public void JsonAdd(BlockfrostItemJson item)
@@ -143,5 +124,36 @@ namespace Blockfrost.Controller
                 throw;
             }
         }
+
+        public void GetOnChainMetaData(string collection, out Dictionary<string, OnChainMetaData> items)
+        {
+            items = new Dictionary<string, OnChainMetaData>();
+            using BlockfrostADO context = new();
+            try
+            {
+                switch (collection)
+                {
+                    //##_:
+                    case "DeluxeBotOGCollection":
+                        var foundDeluxeBotOGCollection = context.DeluxeBotOGCollection.ToList();
+                        foreach (var item in foundDeluxeBotOGCollection) items.Add(item.asset, item);
+                        break;
+                    case "KBot":
+                        var foundKBot = context.KBot.ToList();
+                        foreach (var item in foundKBot) items.Add(item.asset, item);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
     }
 }
+
+
+
