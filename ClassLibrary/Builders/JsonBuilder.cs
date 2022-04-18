@@ -12,6 +12,7 @@ namespace WenRarityLibrary.Builders
         private static JsonBuilder instance;
         public static JsonBuilder Instance => instance ?? (instance = new JsonBuilder());
         private JsonBuilder() { }
+
         private static Ducky _ducky = Ducky.Instance;
 
         /// <summary>
@@ -21,32 +22,39 @@ namespace WenRarityLibrary.Builders
         public void AsCIPStandardModel(string input, string type, out OnChainMetaDataViewModel built)
         {
             built = new OnChainMetaDataViewModel();
+
             if (input == "") return;
 
             JObject deserialized = JsonConvert.DeserializeObject(input) as JObject;
             BlockfrostAsset bfAsset = JsonConvert.DeserializeObject<BlockfrostAsset>(input);
+
             JToken onchain_metadata = deserialized.GetValue("onchain_metadata");
             var attributes = onchain_metadata["attributes"];
+            
             built.model = GenerateOnChainMetaData(type, onchain_metadata.ToString());
 
+            // New framework token handling.
             if(built.model.GetType().Name == "DefaultOnChainMetaData")
             {
                 built.model.attributes = attributes.ToObject<Dictionary<string, string>>();
             }
 
             if (onchain_metadata == null) return;
+
             foreach (JToken child in onchain_metadata.Children())
             {
                 JProperty property = (JProperty)child;
                 string lower = property.Name.ToLower();
 
-                // Id
+                // Id - safety check.
                 if (lower.Equals("id")) built.attributes.Add("str_" + property.Name.Replace(" ", ""), property.Value.ToString());
                 else
                 {
                     AttributeHelper(property, out bool valid);
                     string value = AttributeCleaner(property.Value.ToString());
-                    if (valid) built.attributes.Add(property.Name.Replace(" ", ""), value);
+                    string safeName = property.Name.Replace(" ", ""); // Replace spaces
+
+                    if (valid) built.attributes.Add(safeName, value);
                 }
             }
         }
@@ -61,7 +69,6 @@ namespace WenRarityLibrary.Builders
             catch (Exception ex)
             {
                 _ducky.Error("JsonBuilder", "AsBlockfrostPolicyItem", ex.Message);
-                throw;
             }
         }
 

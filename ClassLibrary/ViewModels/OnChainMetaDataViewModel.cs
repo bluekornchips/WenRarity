@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData;
 using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData.Token;
 
@@ -17,10 +12,9 @@ namespace WenRarityLibrary.ViewModels
         public string policy_id { get; set; }
         public string asset { get; set; }
         #endregion
-        //public Type type { get; set; } = typeof(DefaultOnChainMetaData);
         public Dictionary<string, string> attributes { get; set; } = new Dictionary<string, string>();
         public List<OnChainFilesViewModel> files { get; set; }
-
+        
         public OnChainMetaData model { get; set; }
 
         public dynamic AsModel(string type)

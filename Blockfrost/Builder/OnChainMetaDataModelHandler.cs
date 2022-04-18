@@ -9,6 +9,7 @@ namespace Blockfrost.Builder
         private static OnChainMetaDataModelHandler instance;
         public static OnChainMetaDataModelHandler Instance => instance ?? (instance = new OnChainMetaDataModelHandler());
         private OnChainMetaDataModelHandler() { }
+
         private static Ducky _ducky = Ducky.Instance;
 
         //##_:

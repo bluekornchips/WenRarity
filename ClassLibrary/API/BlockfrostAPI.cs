@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WenRarityLibrary.ADO;
-
-namespace WenRarityLibrary.API
+﻿namespace WenRarityLibrary.API
 {
     public class BlockfrostAPI
     {
@@ -19,6 +12,11 @@ namespace WenRarityLibrary.API
         private static readonly string _queryToken = "mainnetqW1HNm5UljEVmlVm5Rr7hdseDMaMZccB";
         private static readonly string _asset = $"{_mainNet}/assets/";
 
+        /// <summary>
+        /// Retrieve a single assets metadata.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <param name="json"></param>
         public void Asset(string asset, out string json)
         {
             json = "";
@@ -34,6 +32,12 @@ namespace WenRarityLibrary.API
             }
         }
 
+        /// <summary>
+        /// Collect assets for the policy, default return size is 100 items.
+        /// </summary>
+        /// <param name="policyId"></param>
+        /// <param name="page"></param>
+        /// <param name="json"></param>
         public void Assets_ByPolicy(string policyId, int page, out string json)
         {
             json = "";

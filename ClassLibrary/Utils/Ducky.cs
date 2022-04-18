@@ -26,29 +26,59 @@ namespace WenRarityLibrary
             SolidLine();
         }
 
+        /// <summary>
+        /// Quick information.
+        /// </summary>
+        /// <param name="details"></param>
         public void Info(string details)
         {
             QuackConsole(details, QuackType.INFO);
         }
 
+        /// <summary>
+        /// Debug output
+        /// </summary>
+        /// <param name="className"></param>
+        /// <param name="methodName"></param>
+        /// <param name="details"></param>
         public void Debug(string className, string methodName, string details)
         {
             string line = $"[{QuackType.DEBUG}] >>> [{className}.{methodName}] >>> {details}";
             QuackConsole(line, QuackType.DEBUG);
         }
 
+        /// <summary>
+        /// Error output.
+        /// </summary>
+        /// <param name="className"></param>
+        /// <param name="methodName"></param>
+        /// <param name="details"></param>
         public void Error(string className, string methodName, string details)
         {
             string line = $"[{QuackType.ERROR}] >>> [{className}.{methodName}] >>> {details}";
             QuackConsole(line, QuackType.ERROR);
         }
 
+        /// <summary>
+        /// Critical error, required remediation.
+        /// Always throws.
+        /// </summary>
+        /// <param name="className"></param>
+        /// <param name="methodName"></param>
+        /// <param name="details"></param>
+        /// <exception cref="Exception"></exception>
         public void Critical(string className, string methodName, string details)
         {
             string line = $"[{QuackType.CRITICAL}] >>> [{className}.{methodName}] >>> {details}";
             QuackConsole(line, QuackType.CRITICAL);
+            throw new Exception(line);
         }
 
+        /// <summary>
+        /// Display results to console if the log level is valid.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="quackType"></param>
         private void QuackConsole(string line, QuackType quackType)
         {
             _now = DateTime.Now;

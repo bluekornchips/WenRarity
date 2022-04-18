@@ -10,9 +10,9 @@ namespace Blockfrost.Controller
     {
         private static BlockfrostController _instance;
         public static BlockfrostController Instance => _instance ?? (_instance = new BlockfrostController());
-        private static Ducky _ducky = Ducky.Instance;
         private BlockfrostController() { }
 
+        private static Ducky _ducky = Ducky.Instance;
 
         public void AddCollection(Collection item)
         {
@@ -28,8 +28,8 @@ namespace Blockfrost.Controller
                 }
                 catch (Exception ex)
                 {
-                    _ducky.Error("BlockfrostController", "AddCollection", ex.Message);
                     trans.Rollback();
+                    _ducky.Critical("BlockfrostController", "AddCollection", ex.Message);
                     throw;
                 }
             }
@@ -41,6 +41,11 @@ namespace Blockfrost.Controller
             return context.Collection.Where(i => i.PolicyId == policyId).Any();
         }
 
+        /// <summary>
+        /// Add the full json data to the database.
+        /// Allows prevention of future Blockfrost calls.
+        /// </summary>
+        /// <param name="item"></param>
         public void JsonAdd(BlockfrostItemJson item)
         {
             using BlockfrostADO context = new();
@@ -54,29 +59,18 @@ namespace Blockfrost.Controller
                 }
                 catch (Exception ex)
                 {
-                    _ducky.Error("BlockfrostController", "JsonAdd", ex.Message);
                     trans.Rollback();
+                    _ducky.Critical("BlockfrostController", "JsonAdd", ex.Message);
                     throw;
                 }
             }
         }
 
-        public void JsonGetAll(string policyId, out List<BlockfrostItemJson> items)
-        {
-            items = new();
-            using BlockfrostADO context = new();
-            {
-                try
-                {
-                    items = context.BlockfrostItemJson.Where(i => i.policy_id == policyId).ToList();
-                }
-                catch (Exception ex)
-                {
-                    _ducky.Error("BlockfrostController", "JsonGetAll", ex.Message);
-                }
-            }
-        }
-
+        /// <summary>
+        /// Returns the in database json for a single item.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <param name="item"></param>
         public void JsonGetOne(string asset, out BlockfrostItemJson item)
         {
             item = new();
@@ -91,6 +85,10 @@ namespace Blockfrost.Controller
             }
         }
 
+        /// <summary>
+        /// Helper method for deleting a collection.
+        /// </summary>
+        /// <param name="collection"></param>
         public void Delete(Collection collection)
         {
             using BlockfrostADO context = new();
@@ -119,13 +117,18 @@ namespace Blockfrost.Controller
             }
             catch (Exception ex)
             {
-                _ducky.Error("BlockfrostController", "Reset", ex.Message);
+                _ducky.Critical("BlockfrostController", "Reset", ex.Message);
                 dbContextTransaction.Rollback();
                 throw;
             }
         }
 
-        public void GetOnChainMetaData(string collection, out Dictionary<string, OnChainMetaData> items)
+        /// <summary>
+        /// Return the given collection as a dictionary of OnChainMetaData.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="items"></param>
+        public void GetOnChainMetaDataAsModel(string collection, out Dictionary<string, OnChainMetaData> items)
         {
             items = new Dictionary<string, OnChainMetaData>();
             using BlockfrostADO context = new();
@@ -148,7 +151,7 @@ namespace Blockfrost.Controller
             }
             catch (Exception ex)
             {
-
+                _ducky.Critical("BlockfrostController", "GetOnChainMetaDataAsModel", ex.Message);
                 throw;
             }
         }

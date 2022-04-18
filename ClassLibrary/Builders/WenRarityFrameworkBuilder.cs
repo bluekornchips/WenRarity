@@ -13,19 +13,31 @@ namespace WenRarityLibrary.Builders
         {
             DirectorySafetyChecks();
         }
+
         private static WenRarityFileIO _fileIO = WenRarityFileIO.Instance;
         private static Ducky _ducky = Ducky.Instance;
-        private static readonly string _marker = @"//##_:";
 
+        private static readonly string _marker = @"//##_:";
         private string blockFrostDir = "";
         private string libraryDir = "";
 
-
+        /// <summary>
+        /// First step, creating the Token.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="vm"></param>
         public void CreateToken(Collection collection, OnChainMetaDataViewModel vm)
         {
             AddToken(collection, vm);
         }
 
+        /// <summary>
+        /// Complete framework build, updates files.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="vm"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         public bool Build(Collection collection, OnChainMetaDataViewModel vm, out string status)
         {
             status = "";
@@ -47,6 +59,11 @@ namespace WenRarityLibrary.Builders
             return true;
         }
 
+        /// <summary>
+        /// Safety measure for checking if the token exists before completing framework build.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <returns></returns>
         private bool CheckTokenExists(Collection collection)
         {
             string fileLoc = libraryDir + $"\\ADO\\Rime\\Models\\OnChainMetaData\\Token\\{collection.Name}.cs";
@@ -55,6 +72,11 @@ namespace WenRarityLibrary.Builders
             return false;
         }
 
+        /// <summary>
+        /// Adds the new token to the Class Library.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="vm"></param>
         private void AddToken(Collection collection, OnChainMetaDataViewModel vm)
         {
             StringBuilder sb = new();
@@ -281,8 +303,12 @@ namespace WenRarityLibrary.Builders
         }
 
 
-
-
+        /// <summary>
+        /// Output Handler for proper newlines and tabs.
+        /// </summary>
+        /// <param name="newLine"></param>
+        /// <param name="tabs"></param>
+        /// <returns></returns>
         private string OH(int newLine, int tabs)
         {
             string output = "";

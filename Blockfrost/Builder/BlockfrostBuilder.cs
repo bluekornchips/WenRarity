@@ -15,6 +15,8 @@ namespace Blockfrost.Builder
         private static BlockfrostBuilder instance;
         public static BlockfrostBuilder Instance => instance ?? (instance = new BlockfrostBuilder());
         private BlockfrostBuilder() { }
+
+
         private static Ducky _ducky = Ducky.Instance;
         BlockfrostController _blockfrostController = BlockfrostController.Instance;
         JsonBuilder _jsonBuilder = JsonBuilder.Instance;
@@ -26,24 +28,9 @@ namespace Blockfrost.Builder
         private string _type = "DefaultOnChainMetaData";
         private Collection _collection = new Collection();
 
-        public void Build()
+        public void Build(Collection collection)
         {
-            //_collection = new Collection()
-            //{
-            //    PolicyId = "3f00d83452b4ead45cf5e0ca811fe8da561dfc45a5e414c88c4d8759",
-            //    Name = "KBot",
-            //    DatabaseName = "KBot",
-            //    RealName = "KBot"
-            //};
-
-            _collection = new Collection()
-            {
-                PolicyId = "b65ce524203b7a7d48b55ff037c847c5ec8c185cd3bdb7abad0a02d4",
-                Name = "DeluxeBotOGCollection",
-                DatabaseName = "DeluxeBotOGCollection",
-                RealName = "DeluxeBot OG Collection"
-            };
-
+            _collection = collection;
             _type = _collection.Name;
 
             if (!_blockfrostController.CollectionExists(_collection.PolicyId))
@@ -53,6 +40,8 @@ namespace Blockfrost.Builder
             }
 
             bool reset = false;
+
+            // Helper for reseting data.
             if (reset)
             {
                 _blockfrostController.Delete(_collection);
@@ -65,26 +54,43 @@ namespace Blockfrost.Builder
 
         private void NewCollection()
         {
+            // Add the collection to the db.
             _blockfrostController.AddCollection(_collection);
+
+            // Get a sample of the data from the first page.
             _blockfrostAPI.Assets_ByPolicy(_collection.PolicyId, 1, out string policyJson);
             
+            // Use the sample data to generate policy items.
             _jsonBuilder.AsBlockfrostPolicyItems(policyJson, out List<BlockfrostPolicyItem> policyItems);
             
+            // Remove the 0 quantity items (burned).
             policyItems = policyItems.Where(i => i.Quantity > 0).ToList();
             
+            // Select the first entry.
             BlockfrostPolicyItem item = policyItems.FirstOrDefault();
+
+            // Retrive the items json from blockfrost api.
             _blockfrostAPI.Asset(item.Asset, out string assetJson);
+
+            // Create the sample model - will contain nulls!
             _jsonBuilder.AsCIPStandardModel(assetJson, _type, out OnChainMetaDataViewModel vm);
 
+            // Create the framework token.
             frameworkBuilder.CreateToken(_collection, vm);
+
+            // Complain if any errors.
             if (!frameworkBuilder.Build(_collection, vm, out string status)) throw new Exception(status);
         }
 
+        /// <summary>
+        /// Get existing records, if any.
+        /// </summary>
         public void ExisitingRecords()
         {
-            _blockfrostController.GetOnChainMetaData(_collection.Name, out _assets);
+            _blockfrostController.GetOnChainMetaDataAsModel(_collection.Name, out _assets);
         }
 
+        // If there is existing json, return the item and true.
         public bool ExistingJson(string asset, out string json)
         {
             json = "";
@@ -94,6 +100,9 @@ namespace Blockfrost.Builder
             return true;
         }
 
+        /// <summary>
+        /// Retrieve the assets json from either the local database copy or from blockfrostapi.
+        /// </summary>
         public void RetrieveJson()
         {
             bool retrieved = false;
@@ -104,6 +113,7 @@ namespace Blockfrost.Builder
             do
             {
                 _blockfrostAPI.Assets_ByPolicy(_collection.PolicyId, ++page, out string policyJson);
+
                 if (policyJson == "[]")
                 {
                     retrieved = true;
@@ -111,8 +121,9 @@ namespace Blockfrost.Builder
                 }
                 _jsonBuilder.AsBlockfrostPolicyItems(policyJson, out List<BlockfrostPolicyItem> policyItems);
 
-                // Trim 0 Quantities
+                // Trim 0 Quantities - Usually the first item in the list.
                 policyItems = policyItems.Where(i => i.Quantity > 0).ToList();
+
                 foreach (BlockfrostPolicyItem policyItem in policyItems)
                 {
                     if (_assets.ContainsKey(policyItem.Asset)) ++matchCount;
@@ -135,12 +146,12 @@ namespace Blockfrost.Builder
                         
                         _jsonBuilder.AsCIPStandardModel(assetJson, _type, out OnChainMetaDataViewModel vm);
                         
-
                         vm.model.asset = policyItem.Asset;
                         vm.model.policy_id = _collection.PolicyId;
 
                         _onChainMetaDataModelHandler.Add(vm.AsModel(_type));
                         _assets.Add(policyItem.Asset,vm.model);
+
                         if(!addedFromDb) _ducky.Info($"Added {vm.model.name}.");
                     }
 
