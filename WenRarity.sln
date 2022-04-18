@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rime", "Rime\Rime.csproj", "{7BADB7F6-B89D-47AD-A896-86BC080F4DEB}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{99F1A7F7-1E5B-4C77-8FAD-E9A6BD407728}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -12,9 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WenRarityLibrary", "ClassLibrary\WenRarityLibrary.csproj", "{04AF1DC7-062C-46BC-B925-D69DBCCCBD54}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rarity", "Rarity\Rarity.csproj", "{AB63AF67-C050-4D57-86F9-03ABECF7BD66}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blockfrost", "Blockfrost\Blockfrost.csproj", "{0EDFE36D-00BC-4853-B613-0C220E467EB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blockfrost", "Blockfrost\Blockfrost.csproj", "{0EDFE36D-00BC-4853-B613-0C220E467EB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,18 +18,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7BADB7F6-B89D-47AD-A896-86BC080F4DEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7BADB7F6-B89D-47AD-A896-86BC080F4DEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7BADB7F6-B89D-47AD-A896-86BC080F4DEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7BADB7F6-B89D-47AD-A896-86BC080F4DEB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04AF1DC7-062C-46BC-B925-D69DBCCCBD54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04AF1DC7-062C-46BC-B925-D69DBCCCBD54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04AF1DC7-062C-46BC-B925-D69DBCCCBD54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04AF1DC7-062C-46BC-B925-D69DBCCCBD54}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB63AF67-C050-4D57-86F9-03ABECF7BD66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB63AF67-C050-4D57-86F9-03ABECF7BD66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB63AF67-C050-4D57-86F9-03ABECF7BD66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB63AF67-C050-4D57-86F9-03ABECF7BD66}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0EDFE36D-00BC-4853-B613-0C220E467EB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0EDFE36D-00BC-4853-B613-0C220E467EB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EDFE36D-00BC-4853-B613-0C220E467EB4}.Release|Any CPU.ActiveCfg = Release|Any CPU

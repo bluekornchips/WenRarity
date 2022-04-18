@@ -41,12 +41,12 @@ namespace WenRarityLibrary.Builders
                 string lower = property.Name.ToLower();
 
                 // Id
-                if (lower.Equals("id")) built.attributes.Add("str_" + property.Name, property.Value.ToString());
+                if (lower.Equals("id")) built.attributes.Add("str_" + property.Name.Replace(" ", ""), property.Value.ToString());
                 else
                 {
                     AttributeHelper(property, out bool valid);
                     string value = AttributeCleaner(property.Value.ToString());
-                    if (valid) built.attributes.Add(property.Name, value);
+                    if (valid) built.attributes.Add(property.Name.Replace(" ", ""), value);
                 }
             }
         }
@@ -122,6 +122,8 @@ namespace WenRarityLibrary.Builders
 		}
     }
 }
+
+
 
 
 

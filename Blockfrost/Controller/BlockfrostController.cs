@@ -134,10 +134,10 @@ namespace Blockfrost.Controller
                 switch (collection)
                 {
                     //##_:
-                    case "DeluxeBotOGCollection":
-                        var foundDeluxeBotOGCollection = context.DeluxeBotOGCollection.ToList();
-                        foreach (var item in foundDeluxeBotOGCollection) items.Add(item.asset, item);
-                        break;
+					case "DeluxeBotOGCollection" :
+						var foundDeluxeBotOGCollection = context.DeluxeBotOGCollection.ToList();
+						foreach (var item in foundDeluxeBotOGCollection) items.Add(item.asset, item);
+						break;
                     case "KBot":
                         var foundKBot = context.KBot.ToList();
                         foreach (var item in foundKBot) items.Add(item.asset, item);
@@ -154,6 +154,7 @@ namespace Blockfrost.Controller
         }
     }
 }
+
 
 
 
