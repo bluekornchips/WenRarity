@@ -1,25 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WenRarityLibrary.ADO.Rime.Models.OnChainMetaData
+namespace WenRarityLibrary.ADO.Rime.Models.Rarity
 {
-    public abstract class OnChainMetaData
+    public abstract class OnChainRarity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-
-        [Required]
-        [MaxLength(150)]
-        public string name { get; set; }
-
-        [Required]
-        [MaxLength(150)]
-        public string image { get; set; }
-
-        [Required]
-        [MaxLength(150)]
-        public string mediaType { get; set; }
 
         [Required]
         [MaxLength(150)]
@@ -32,5 +20,5 @@ namespace WenRarityLibrary.ADO.Rime.Models.OnChainMetaData
         public Dictionary<string, string> attributes { get; set; }
     }
 
-    public class DefaultOnChainMetaData : OnChainMetaData { }
+    public class DefaultOnChainMetaData : OnChainRarity { }
 }

@@ -1,6 +1,6 @@
-using Rime.ADO;
+using Blockfrost.ADO;
 using WenRarityLibrary;
-using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData.Token;
+using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;
 
 namespace Blockfrost.Builder
 {
@@ -13,23 +13,7 @@ namespace Blockfrost.Builder
         private static Ducky _ducky = Ducky.Instance;
 
         //##_:
-		public void Add(DeluxeBotOGCollection item)
-		{
-			using BlockfrostADO context = new();
-			var trans = context.Database.BeginTransaction();
-			try
-			{
-				context.DeluxeBotOGCollection.Add(item);
-				trans.Commit();
-				context.SaveChanges();
-			}
-			catch (Exception ex)
-			{
-				trans.Rollback();
-				_ducky.Error("OnChainMetaDataModelHandler", "Add(DeluxeBotOGCollection)", ex.Message);
-			}
-		}
-
+		//##_:KBot+
 		public void Add(KBot item)
 		{
 			using BlockfrostADO context = new();
@@ -46,8 +30,24 @@ namespace Blockfrost.Builder
 				_ducky.Error("OnChainMetaDataModelHandler", "Add(KBot)", ex.Message);
 			}
 		}
+		//##_:KBot-
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -71,7 +71,6 @@ namespace WenRarityLibrary
         {
             string line = $"[{QuackType.CRITICAL}] >>> [{className}.{methodName}] >>> {details}";
             QuackConsole(line, QuackType.CRITICAL);
-            throw new Exception(line);
         }
 
         /// <summary>

@@ -12,6 +12,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WenRarityLibrary", "ClassLi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blockfrost", "Blockfrost\Blockfrost.csproj", "{0EDFE36D-00BC-4853-B613-0C220E467EB4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stats", "Stats\Stats.csproj", "{B40E949E-7798-4D46-8C06-AD8848FE5650}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{0EDFE36D-00BC-4853-B613-0C220E467EB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EDFE36D-00BC-4853-B613-0C220E467EB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EDFE36D-00BC-4853-B613-0C220E467EB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B40E949E-7798-4D46-8C06-AD8848FE5650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B40E949E-7798-4D46-8C06-AD8848FE5650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B40E949E-7798-4D46-8C06-AD8848FE5650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B40E949E-7798-4D46-8C06-AD8848FE5650}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

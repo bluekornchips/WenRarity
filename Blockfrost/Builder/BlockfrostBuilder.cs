@@ -1,8 +1,8 @@
 ﻿using Blockfrost.Controller;
 using WenRarityLibrary.ADO.Blockfrost;
-using WenRarityLibrary.ADO.Rime.Models;
+using WenRarityLibrary.ADO.Blockfrost.Models;
 using WenRarityLibrary.Builders;
-using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData;
+using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData;
 using WenRarityLibrary.API;
 using WenRarityLibrary.ViewModels;
 using WenRarityLibrary;
@@ -22,7 +22,7 @@ namespace Blockfrost.Builder
         JsonBuilder _jsonBuilder = JsonBuilder.Instance;
         BlockfrostAPI _blockfrostAPI = BlockfrostAPI.Instance;
         OnChainMetaDataModelHandler _onChainMetaDataModelHandler = OnChainMetaDataModelHandler.Instance;
-        private static WenRarityFrameworkBuilder frameworkBuilder = WenRarityFrameworkBuilder.Instance;
+        private static FrameworkDirector frameworkDirector = FrameworkDirector.Instance;
 
         private Dictionary<string, OnChainMetaData> _assets = new();
         private string _type = "DefaultOnChainMetaData";
@@ -33,20 +33,26 @@ namespace Blockfrost.Builder
             _collection = collection;
             _type = _collection.Name;
 
+
+            bool reset = true;
+
+            // Helper for reseting data.
+            if (reset)
+            {
+                _blockfrostController.Delete(_collection);
+                //_blockfrostController.AddCollection(_collection);
+
+                FrameworkBuilder fb = new();
+                fb.RemoveAllCollectionInfoFromFiles(_collection);
+            }
+
+
             if (!_blockfrostController.CollectionExists(_collection.PolicyId))
             {
                 NewCollection();
                 return;
             }
 
-            bool reset = false;
-
-            // Helper for reseting data.
-            if (reset)
-            {
-                _blockfrostController.Delete(_collection);
-                _blockfrostController.AddCollection(_collection);
-            }
 
             ExisitingRecords();
             RetrieveJson();
@@ -54,8 +60,7 @@ namespace Blockfrost.Builder
 
         private void NewCollection()
         {
-            // Add the collection to the db.
-            _blockfrostController.AddCollection(_collection);
+
 
             // Get a sample of the data from the first page.
             _blockfrostAPI.Assets_ByPolicy(_collection.PolicyId, 1, out string policyJson);
@@ -76,10 +81,13 @@ namespace Blockfrost.Builder
             _jsonBuilder.AsCIPStandardModel(assetJson, _type, out OnChainMetaDataViewModel vm);
 
             // Create the framework token.
-            frameworkBuilder.CreateToken(_collection, vm);
+            frameworkDirector.bf.CreateToken(_collection, vm);
+
+            // Add the collection to the db.
+            _blockfrostController.AddCollection(_collection);
 
             // Complain if any errors.
-            if (!frameworkBuilder.Build(_collection, vm, out string status)) throw new Exception(status);
+            if (!frameworkDirector.bf.Build(_collection, vm, out string status)) throw new Exception(status);
         }
 
         /// <summary>
@@ -149,7 +157,7 @@ namespace Blockfrost.Builder
                         vm.model.asset = policyItem.Asset;
                         vm.model.policy_id = _collection.PolicyId;
 
-                        _onChainMetaDataModelHandler.Add(vm.AsModel(_type));
+                        //_onChainMetaDataModelHandler.Add(vm.AsModel(_type));
                         _assets.Add(policyItem.Asset,vm.model);
 
                         if(!addedFromDb) _ducky.Info($"Added {vm.model.name}.");

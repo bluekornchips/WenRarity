@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WenRarityLibrary.ADO.Rime.Models.OnChainMetaData.Token
+namespace WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token
 {
 	[Table("KBot")]
 	public partial class KBot : OnChainMetaData

@@ -1,25 +1,17 @@
 ﻿using System.Text;
-using WenRarityLibrary.ADO.Rime.Models;
+using WenRarityLibrary.ADO.Blockfrost.Models;
 using WenRarityLibrary.ViewModels;
 
 namespace WenRarityLibrary.Builders
 {
-
-    public class WenRarityFrameworkBuilder
+    public class BlockfrostFrameworkBuilder : FrameworkBuilder
     {
-        private static WenRarityFrameworkBuilder instance;
-        public static WenRarityFrameworkBuilder Instance => instance ?? (instance = new WenRarityFrameworkBuilder());
-        private WenRarityFrameworkBuilder()
+        private static BlockfrostFrameworkBuilder instance;
+        public static BlockfrostFrameworkBuilder Instance => instance ?? (instance = new BlockfrostFrameworkBuilder());
+        private BlockfrostFrameworkBuilder()
         {
             DirectorySafetyChecks();
         }
-
-        private static WenRarityFileIO _fileIO = WenRarityFileIO.Instance;
-        private static Ducky _ducky = Ducky.Instance;
-
-        private static readonly string _marker = @"//##_:";
-        private string blockFrostDir = "";
-        private string libraryDir = "";
 
         /// <summary>
         /// First step, creating the Token.
@@ -66,7 +58,7 @@ namespace WenRarityLibrary.Builders
         /// <returns></returns>
         private bool CheckTokenExists(Collection collection)
         {
-            string fileLoc = libraryDir + $"\\ADO\\Rime\\Models\\OnChainMetaData\\Token\\{collection.Name}.cs";
+            string fileLoc = libraryDir + $"\\ADO\\Blockfrost\\Models\\OnChainMetaData\\Token\\{collection.Name}.cs";
 
             if (File.Exists(fileLoc)) return true;
             return false;
@@ -81,11 +73,11 @@ namespace WenRarityLibrary.Builders
         {
             StringBuilder sb = new();
             int tabs = 1;
-            string fileLoc = libraryDir + $"\\ADO\\Rime\\Models\\OnChainMetaData\\Token\\{collection.Name}.cs";
+            string fileLoc = libraryDir + $"\\ADO\\Blockfrost\\Models\\OnChainMetaData\\Token\\{collection.Name}.cs";
 
             // Header
             sb.Append("using System.ComponentModel.DataAnnotations.Schema;");
-            sb.Append($"{OH(2, 0)}namespace WenRarityLibrary.ADO.Rime.Models.OnChainMetaData.Token");
+            sb.Append($"{OH(2, 0)}namespace WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token");
             sb.Append($"{OH(1, 0)}" + "{");
             sb.Append($"{OH(1, tabs)}[Table(\"{collection.Name}\")]");
             sb.Append($"{OH(1, tabs)}public partial class {collection.Name} : OnChainMetaData");
@@ -127,11 +119,14 @@ namespace WenRarityLibrary.Builders
             // GetOnChainMetaData
             StringBuilder sbHandler = new();
             int tabs = 5;
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}+");// START MARKER
 
             sbHandler.Append($"{OH(1, tabs++)}case \"{collection.Name}\" :");
             sbHandler.Append($"{OH(1, tabs)}var found{collection.Name} = context.{collection.Name}.ToList();");
             sbHandler.Append($"{OH(1, tabs)}foreach (var item in found{collection.Name}) items.Add(item.asset, item);");
-            sbHandler.Append($"{OH(1, tabs)}break;");
+            sbHandler.Append($"{OH(1, tabs--)}break;");
+
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}-");// END MARKER
 
             string newText = sbHandler.ToString();
 
@@ -161,6 +156,8 @@ namespace WenRarityLibrary.Builders
             StringBuilder sbHandler = new();
             int tabs = 2;
 
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}+");// START MARKER
+
             sbHandler.Append($"{OH(1, tabs)}public void Add({collection.Name} item)");
             sbHandler.Append($"{OH(1, tabs++)}" + "{");
             sbHandler.Append($"{OH(1, tabs)}using BlockfrostADO context = new();");
@@ -178,7 +175,8 @@ namespace WenRarityLibrary.Builders
             sbHandler.Append($"{OH(1, tabs--)}" + "}");
 
             sbHandler.Append($"{OH(1, tabs)}" + "}");
-            sbHandler.Append($"{OH(1, 0)}");
+
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}-");// END MARKER
 
             string newText = sbHandler.ToString();
 
@@ -194,7 +192,7 @@ namespace WenRarityLibrary.Builders
         {
             StringBuilder sb = new();
 
-            string fileLoc = blockFrostDir + "\\ADO\\BlockfrostADO.cs";
+            string fileLoc = libraryDir + "\\ADO\\Blockfrost\\BlockfrostADO.cs";
             string startToken = _marker + "tokens+";
 
             _fileIO.Read(fileLoc, out string readText);
@@ -203,8 +201,12 @@ namespace WenRarityLibrary.Builders
             string fileStartToMarker = readText.Substring(0, startLoc);
             string filerMarkerToEnd = readText.Substring(startLoc + startToken.Length);
 
-            string newText = $"{OH(1,2)}public virtual DbSet<{collection.Name}> {collection.Name} " +
+            string newText = $"{OH(1, 2)}{_marker}{collection.Name}+";// START MARKER
+
+            newText += $"{OH(1,2)}public virtual DbSet<{collection.Name}> {collection.Name} " +
                 "{ get; set; }";
+
+            newText +=$"{OH(1, 2)}{_marker}{collection.Name}-";// END MARKER
 
             sb.Append(fileStartToMarker);
             sb.Append(startToken);
@@ -227,7 +229,11 @@ namespace WenRarityLibrary.Builders
             string fileStartToMarker = readText.Substring(0, startLoc);
             string filerMarkerToEnd = readText.Substring(startLoc + startToken.Length);
 
-            string newText = $"{OH(1, 4)}case \"{collection.Name}\": return ({collection.Name})model;";
+            string newText = $"{OH(1, 4)}{_marker}{collection.Name}+";// START MARKER
+
+            newText += $"{OH(1, 4)}case \"{collection.Name}\": return ({collection.Name})model;";
+
+            newText += $"{OH(1, 4)}{_marker}{collection.Name}-";// END MARKER
 
             sb.Append(fileStartToMarker);
             sb.Append(startToken);
@@ -252,7 +258,11 @@ namespace WenRarityLibrary.Builders
             string fileStartToMarker = readText.Substring(0, startLoc);
             string filerMarkerToEnd = readText.Substring(startLoc + startToken.Length);
 
-            string newText = $"{OH(1,4)}case \"{collection.Name}\":return Handle{collection.Name}(json);";
+            string newText = $"{OH(1, 4)}{_marker}{collection.Name}+";// START MARKER
+
+            newText += $"{OH(1,4)}case \"{collection.Name}\":return Handle{collection.Name}(json);";
+
+            newText += $"{OH(1, 4)}{_marker}{collection.Name}-";// END MARKER
 
             sb.Append(fileStartToMarker);
             sb.Append(startToken);
@@ -281,6 +291,8 @@ namespace WenRarityLibrary.Builders
             // Attributes
             StringBuilder sbHandler = new();
 
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}+");// START MARKER
+
             sbHandler.Append($"{OH(1, tabs)}private {collection.Name} Handle{collection.Name}(string json)");
             sbHandler.Append($"{OH(1, tabs++)}" + "{");
             sbHandler.Append($"{OH(1, tabs)}{collection.Name} model = JsonConvert.DeserializeObject<{collection.Name}>(json);");
@@ -292,6 +304,8 @@ namespace WenRarityLibrary.Builders
             sbHandler.Append($"{OH(1, tabs)}" + "}");
             sbHandler.Append($"{OH(1, 0)}");
 
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}-");// END MARKER
+
             string newText = sbHandler.ToString();
 
             sb.Append(fileStartToMarker);
@@ -300,72 +314,6 @@ namespace WenRarityLibrary.Builders
             sb.Append(filerMarkerToEnd);
 
             _fileIO.Write(sb.ToString(), fileLoc);
-        }
-
-
-        /// <summary>
-        /// Output Handler for proper newlines and tabs.
-        /// </summary>
-        /// <param name="newLine"></param>
-        /// <param name="tabs"></param>
-        /// <returns></returns>
-        private string OH(int newLine, int tabs)
-        {
-            string output = "";
-            for (int i = 0; i < newLine; i++) output += "\r\n";
-            for (int i = 0; i < tabs; i++) output += "\t";
-            return output;
-        }
-
-        private void DirectorySafetyChecks()
-        {
-            string cwd = "";
-            string[] splitCwd = Environment.CurrentDirectory.Split('\\');
-            bool complete = false;
-
-            foreach (string item in splitCwd)
-            {
-                if (!complete) cwd += $"\\{item}";
-                if (item.Equals("Blockfrost")) complete = true;
-            }
-
-            cwd = cwd.Substring(1, cwd.Length - 1);
-
-            blockFrostDir = cwd;
-            libraryDir = cwd.Replace("Blockfrost", "ClassLibrary");
-
-            //DirADOToken = $@"{cwd}\ADO\Token\";
-            //DirADO = $@"{cwd}\ADO\";
-            //DirVM = $@"{cwd}\ViewModels\Asset\Token\";
-            //DirBuilders = $@"{cwd}\Builders\";
-
-            //if (!Directory.Exists(DirADOToken))
-            //{
-            //    try
-            //    {
-            //        Directory.CreateDirectory(DirADOToken);
-            //        _ducky.Info($"Created directory: {DirADOToken}.");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        _ducky.Error("RimeWriter", "DirectorySafetyChecks", ex.Message);
-            //        throw;
-            //    }
-            //}
-
-            //if (!Directory.Exists(DirVM))
-            //{
-            //    try
-            //    {
-            //        Directory.CreateDirectory(DirVM);
-            //        _ducky.Info($"Created directory: {DirVM}.");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        _ducky.Error("RimeWriter", "DirectorySafetyChecks", ex.Message);
-            //        throw;
-            //    }
-            //}
         }
     }
 }

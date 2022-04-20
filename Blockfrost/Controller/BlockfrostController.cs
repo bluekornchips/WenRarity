@@ -1,8 +1,8 @@
-using Rime.ADO;
+using Blockfrost.ADO;
 using WenRarityLibrary;
 using WenRarityLibrary.ADO.Blockfrost;
-using WenRarityLibrary.ADO.Rime.Models;
-using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData;
+using WenRarityLibrary.ADO.Blockfrost.Models;
+using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData;
 
 namespace Blockfrost.Controller
 {
@@ -137,14 +137,12 @@ namespace Blockfrost.Controller
                 switch (collection)
                 {
                     //##_:
-					case "DeluxeBotOGCollection" :
-						var foundDeluxeBotOGCollection = context.DeluxeBotOGCollection.ToList();
-						foreach (var item in foundDeluxeBotOGCollection) items.Add(item.asset, item);
+					//##_:KBot+
+					case "KBot" :
+						var foundKBot = context.KBot.ToList();
+						foreach (var item in foundKBot) items.Add(item.asset, item);
 						break;
-                    case "KBot":
-                        var foundKBot = context.KBot.ToList();
-                        foreach (var item in foundKBot) items.Add(item.asset, item);
-                        break;
+					//##_:KBot-
                     default:
                         break;
                 }
@@ -157,6 +155,20 @@ namespace Blockfrost.Controller
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

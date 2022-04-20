@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WenRarityLibrary.ADO.Rime.Models
+namespace WenRarityLibrary.ADO.Blockfrost.Models
 {
     public class Collection
     {

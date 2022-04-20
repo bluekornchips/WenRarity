@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WenRarityLibrary.ADO.Blockfrost;
-using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData;
-using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData.Token;
+using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData;
+using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;
 using WenRarityLibrary.ViewModels;
 
 namespace WenRarityLibrary.Builders
@@ -30,16 +30,29 @@ namespace WenRarityLibrary.Builders
 
             JToken onchain_metadata = deserialized.GetValue("onchain_metadata");
             var attributes = onchain_metadata["attributes"];
-            
+
+            // Secondary check for capital letter Attributes.
+            if(attributes == null) attributes = onchain_metadata["Attributes"];
+
+            if (onchain_metadata == null) return;
+
             built.model = GenerateOnChainMetaData(type, onchain_metadata.ToString());
 
             // New framework token handling.
             if(built.model.GetType().Name == "DefaultOnChainMetaData")
             {
-                built.model.attributes = attributes.ToObject<Dictionary<string, string>>();
+                if (attributes != null)
+                {
+                    var unsafeAttributes = attributes.ToObject<Dictionary<string, string>>();
+                    var safeAttributes = new Dictionary<string, string>();
+                    foreach (var item in unsafeAttributes)
+                    {
+                        safeAttributes.Add(item.Key.Replace(" ", ""), item.Value);   
+                    }
+                    built.model.attributes = safeAttributes;
+                }
             }
 
-            if (onchain_metadata == null) return;
 
             foreach (JToken child in onchain_metadata.Children())
             {
@@ -102,33 +115,77 @@ namespace WenRarityLibrary.Builders
             switch (type)
             {
                 //##_:switch+
-				case "DeluxeBotOGCollection":return HandleDeluxeBotOGCollection(json);
+				//##_:KBot+
 				case "KBot":return HandleKBot(json);
+				//##_:KBot-
+				
+				
                 default: return new DefaultOnChainMetaData();
             }
         }
 
         //##_:handle+
-		private DeluxeBotOGCollection HandleDeluxeBotOGCollection(string json)
-		{
-			DeluxeBotOGCollection model = JsonConvert.DeserializeObject<DeluxeBotOGCollection>(json);
-			model.Hat = model.attributes.GetValueOrDefault("Hat");
-			model.Face = model.attributes.GetValueOrDefault("Face");
-			model.Pose = model.attributes.GetValueOrDefault("Pose");
-			model.BackDrop = model.attributes.GetValueOrDefault("Back Drop");
-			model.BodyPaint = model.attributes.GetValueOrDefault("Body Paint");
-			model.FacePlate = model.attributes.GetValueOrDefault("Face Plate");
-			return model;
-		}
-
+		//##_:KBot+
 		private KBot HandleKBot(string json)
 		{
 			KBot model = JsonConvert.DeserializeObject<KBot>(json);
 			model.Pet = model.attributes.GetValueOrDefault("Pet");
 			return model;
 		}
+
+		//##_:KBot-
+		
+		
+		//private DeadRabbits HandleDeadRabbits(string json)
+		//{
+		//	var modelo = JsonConvert.DeserializeObject(json);
+		//	DeadRabbits model = JsonConvert.DeserializeObject<DeadRabbits>(json);
+		//	model.Jaw = model.Attributes.GetValueOrDefault("Jaw");
+		//	model.Pin = model.Attributes.GetValueOrDefault("Pin");
+		//	model.Ears = model.Attributes.GetValueOrDefault("Ears");
+		//	model.Eyes = model.Attributes.GetValueOrDefault("Eyes");
+		//	model.Order = model.Attributes.GetValueOrDefault("Order");
+		//	model.Teeth = model.Attributes.GetValueOrDefault("Teeth");
+		//	model.Eyewear = model.Attributes.GetValueOrDefault("Eyewear");
+		//	model.Clothing = model.Attributes.GetValueOrDefault("Clothing");
+		//	model.EarTags = model.Attributes.GetValueOrDefault("Ear Tags");
+		//	model.Headwear = model.Attributes.GetValueOrDefault("Headwear");
+		//	model.Background = model.Attributes.GetValueOrDefault("Background");
+		//	model.MouthBling = model.Attributes.GetValueOrDefault("Mouth Bling");
+		//	return model;
+		//}
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

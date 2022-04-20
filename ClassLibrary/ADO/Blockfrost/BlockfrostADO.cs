@@ -1,9 +1,9 @@
 using System.Data.Entity;
 using WenRarityLibrary.ADO.Blockfrost;
-using WenRarityLibrary.ADO.Rime.Models;
-using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData.Token;
+using WenRarityLibrary.ADO.Blockfrost.Models;
+using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;
 
-namespace Rime.ADO
+namespace Blockfrost.ADO
 {
     public class BlockfrostADO : DbContext
     {
@@ -11,11 +11,29 @@ namespace Rime.ADO
         public virtual DbSet<BlockfrostItemJson> BlockfrostItemJson { get; set; }
         public virtual DbSet<Collection> Collection { get; set; }
         //##_:tokens+
-		public virtual DbSet<DeluxeBotOGCollection> DeluxeBotOGCollection { get; set; }
+		//##_:KBot+
 		public virtual DbSet<KBot> KBot { get; set; }
+		//##_:KBot-
+		
+		
         //##_:tokens-
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

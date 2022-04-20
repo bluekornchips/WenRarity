@@ -1,15 +1,16 @@
-﻿namespace Blockfrost.Migrations
+﻿namespace Stats.Migrations
 {
     using System.Data.Entity.Migrations;
+    using WenRarityLibrary.ADO.Rime;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Blockfrost.ADO.BlockfrostADO>
+    internal sealed class Configuration : DbMigrationsConfiguration<RimeADO>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(Blockfrost.ADO.BlockfrostADO context)
+        protected override void Seed(RimeADO context)
         {
             //  This method will be called after migrating to the latest version.
 

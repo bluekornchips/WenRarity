@@ -1,5 +1,5 @@
-using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData;
-using WenRarityLibrary.ADO.Rime.Models.OnChainMetaData.Token;
+using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData;
+using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;
 
 namespace WenRarityLibrary.ViewModels
 {
@@ -22,13 +22,31 @@ namespace WenRarityLibrary.ViewModels
             switch (type)
             {
                 //##_:
-				case "DeluxeBotOGCollection": return (DeluxeBotOGCollection)model;
+				//##_:KBot+
 				case "KBot": return (KBot)model;
+				//##_:KBot-
+				
+				
                 default: return model;
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
