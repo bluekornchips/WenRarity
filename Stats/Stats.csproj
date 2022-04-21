@@ -11,8 +11,4 @@
     <ProjectReference Include="..\ClassLibrary\WenRarityLibrary.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ADO\" />
-  </ItemGroup>
-
 </Project>

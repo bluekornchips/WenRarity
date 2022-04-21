@@ -1,4 +1,4 @@
-﻿using Stats.Controller;
+using Stats.Controller;
 using WenRarityLibrary;
 using WenRarityLibrary.ADO.Blockfrost.Models;
 using WenRarityLibrary.Builders;
@@ -16,6 +16,7 @@ namespace Stats.Builders
         private static BlockfrostController _bfController = BlockfrostController.Instance;
         private static RimeController _rimeController = RimeController.Instance;
         private static RimeFrameworkBuilder _rimefb = RimeFrameworkBuilder.Instance;
+        private static StatsFrameworkBuilder _statsfb = StatsFrameworkBuilder.Instance;
         private static StatsHandler _statsb = StatsHandler.Instance;
 
         private static StatsContainer _stats = new StatsContainer();
@@ -38,7 +39,8 @@ namespace Stats.Builders
 
             AttributesForRarity();
 
-            //_rimefb.CreateToken(_stats);
+            _rimefb.CreateToken(_stats);
+            _statsfb.Build(collection, _stats);
 
             //if (!_rimeController.CheckTokenExists(collection))
             //{
@@ -46,8 +48,11 @@ namespace Stats.Builders
             //    return;
             //}
 
+            //_statsfb.Build(collection);
+
             //ClearAttributeTables();
             PopulateAttributeTables();
+
         }
 
         private void PopulateAttributeTables()
@@ -55,11 +60,18 @@ namespace Stats.Builders
             switch (_stats.collection.Name)
             {
                 //##_:populate+
-                //##_:KBot+
-                case "KBot":
-                    _statsb.Handle(_stats);
-                    break;
-                //##_:KBot-
+				//##_:KBot+
+				case "KBot":
+					_statsb.statsHandler = new KBotStatsHandler();
+					_statsb.statsHandler.Handle();
+					_statsb.statsHandler.GenerateCollectionRarity_SQL();
+					break;
+				//##_:KBot-
+				
+				
+				
+				
+				
                 default:
                     break;
             }
@@ -82,3 +94,49 @@ namespace Stats.Builders
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

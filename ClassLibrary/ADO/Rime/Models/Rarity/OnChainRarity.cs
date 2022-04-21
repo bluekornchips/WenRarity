@@ -11,11 +11,16 @@ namespace WenRarityLibrary.ADO.Rime.Models.Rarity
 
         [Required]
         [MaxLength(150)]
-        public string policy_id { get; set; }
+        public string asset { get; set; }
 
         [Required]
         [MaxLength(150)]
-        public string asset { get; set; }
+        public string fingerprint { get; set; }
+
+        [Required]
+        [MaxLength(150)]
+        public string name { get; set; }
+
         [NotMapped]
         public Dictionary<string, string> attributes { get; set; }
     }

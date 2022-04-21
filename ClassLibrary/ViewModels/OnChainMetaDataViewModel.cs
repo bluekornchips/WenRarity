@@ -11,6 +11,7 @@ namespace WenRarityLibrary.ViewModels
         public string mediaType { get; set; }
         public string policy_id { get; set; }
         public string asset { get; set; }
+        public string fingerprint { get; set; }
         #endregion
         public Dictionary<string, string> attributes { get; set; } = new Dictionary<string, string>();
         public List<OnChainFilesViewModel> files { get; set; }
@@ -27,11 +28,25 @@ namespace WenRarityLibrary.ViewModels
 				//##_:KBot-
 				
 				
+				
                 default: return model;
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

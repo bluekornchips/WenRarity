@@ -11,6 +11,7 @@ namespace WenRarityLibrary.Builders
         protected static readonly string _marker = @"//##_:";
         protected static string blockFrostDir = "";
         protected static string libraryDir = "";
+        protected static string statsDir = "";
 
         /// <summary>
         /// Remove all related collection information in the .cs files.
@@ -20,14 +21,15 @@ namespace WenRarityLibrary.Builders
         {
             Remove_LibrayFiles(collection);
             Remove_BlockfrostFiles(collection);
+            Remove_StatsFiles(collection);
         }
 
-        private void Remove_LibrayFiles(Collection collection)
+        protected void Remove_LibrayFiles(Collection collection)
         {
             _ducky.Info($"Removing file information for {collection.Name} in the Class Library Project...");
-            List<string> libraryFiles = new(Directory.GetFiles(libraryDir, "*.cs", SearchOption.AllDirectories));
+            List<string> projectFiles = new(Directory.GetFiles(libraryDir, "*.cs", SearchOption.AllDirectories));
 
-            foreach (var projectFile in libraryFiles)
+            foreach (var projectFile in projectFiles)
             {
                 _fileIO.Read(projectFile, out string readText);
                 string markerStr = $"{ _marker }{ collection.Name }";
@@ -54,12 +56,12 @@ namespace WenRarityLibrary.Builders
             _ducky.Info($"File audit success for {collection.Name}.");
         }
 
-        private void Remove_BlockfrostFiles(Collection collection)
+        protected void Remove_BlockfrostFiles(Collection collection)
         {
             _ducky.Info($"Removing file information for {collection.Name} in the Blockfrost Project...");
-            List<string> libraryFiles = new(Directory.GetFiles(blockFrostDir, "*.cs", SearchOption.AllDirectories));
+            List<string> projectFiles = new(Directory.GetFiles(blockFrostDir, "*.cs", SearchOption.AllDirectories));
 
-            foreach (var projectFile in libraryFiles)
+            foreach (var projectFile in projectFiles)
             {
                 _fileIO.Read(projectFile, out string readText);
                 string markerStr = $"{ _marker }{ collection.Name }";
@@ -86,6 +88,38 @@ namespace WenRarityLibrary.Builders
             _ducky.Info($"File audit success for {collection.Name} Blockfrost files.");
         }
 
+        protected void Remove_StatsFiles(Collection collection)
+        {
+            _ducky.Info($"Removing file information for {collection.Name} in the Stats Project...");
+            List<string> projectFiles = new(Directory.GetFiles(statsDir, "*.cs", SearchOption.AllDirectories));
+
+            foreach (var projectFile in projectFiles)
+            {
+                _fileIO.Read(projectFile, out string readText);
+                string markerStr = $"{ _marker }{ collection.Name }";
+
+                if (readText.Contains(markerStr))
+                {
+                    StringBuilder sb = new();
+                    try
+                    {
+                        int indexOfPlus = readText.IndexOf($"{markerStr}+");
+                        int indexOfMinus = readText.IndexOf($"{markerStr}-");
+
+                        sb.Append(readText.AsSpan(0, indexOfPlus));
+
+                        sb.Append(readText.AsSpan(indexOfMinus + markerStr.Length + 1));
+                        _fileIO.Write(sb.ToString(), projectFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        _ducky.Error("FrameworkBuilder", "Remove_StatsFiles", ex.Message);
+                    }
+                }
+            }
+            _ducky.Info($"File audit success for {collection.Name} Stats Project files.");
+        }
+
 
         /// <summary>
         /// Output Handler for proper newlines and tabs.
@@ -100,6 +134,9 @@ namespace WenRarityLibrary.Builders
             for (int i = 0; i < tabs; i++) output += "\t";
             return output;
         }
+
+        protected string EasyID()
+            => $"{OH(1, 2)}[Key]{OH(1, 2)}[DatabaseGenerated(DatabaseGeneratedOption.Identity)]{OH(1, 2)} public int id" + "{ get; set; }";
 
         protected void DirectorySafetyChecks()
         {
@@ -118,6 +155,7 @@ namespace WenRarityLibrary.Builders
 
             blockFrostDir = cwd + "Blockfrost";
             libraryDir = cwd + "ClassLibrary";
+            statsDir = cwd + "Stats";
 
 
             //if (!Directory.Exists(DirVM))
@@ -134,5 +172,6 @@ namespace WenRarityLibrary.Builders
             //    }
             //}
         }
+
     }
 }

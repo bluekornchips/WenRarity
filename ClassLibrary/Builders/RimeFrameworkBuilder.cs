@@ -20,10 +20,44 @@ namespace WenRarityLibrary.Builders
         {
             tokenDir = libraryDir + $"\\ADO\\Rime\\Models\\Rarity\\Token\\";
 
+            Remove_Rarity(statsContainer.collection);
+
             CreateDirectory(statsContainer.collection);
             AddRarityToken(statsContainer);
             AddAttributeTokens(statsContainer);
             Update_RimeADO(statsContainer);
+        }
+
+        protected void Remove_Rarity(Collection collection)
+        {
+            _ducky.Info($"Removing file information for {collection.Name} rarity in the Libary Project...");
+            List<string> projectFiles = new(Directory.GetFiles(libraryDir + "\\ADO\\Rime", "*.cs", SearchOption.AllDirectories));
+
+            foreach (var projectFile in projectFiles)
+            {
+                _fileIO.Read(projectFile, out string readText);
+                string markerStr = $"{ _marker }{ collection.Name }";
+
+                if (readText.Contains(markerStr))
+                {
+                    StringBuilder sb = new();
+                    try
+                    {
+                        int indexOfPlus = readText.IndexOf($"{markerStr}+");
+                        int indexOfMinus = readText.IndexOf($"{markerStr}-");
+
+                        sb.Append(readText.AsSpan(0, indexOfPlus));
+
+                        sb.Append(readText.AsSpan(indexOfMinus + markerStr.Length + 1));
+                        _fileIO.Write(sb.ToString(), projectFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        _ducky.Error("RimeFrameworkBuilder", "Remove_Rarity", ex.Message);
+                    }
+                }
+            }
+            _ducky.Info($"File audit success for {collection.Name} rarity Libary Project files.");
         }
 
         private void Update_RimeADO(StatsContainer statsContainer)
@@ -43,6 +77,8 @@ namespace WenRarityLibrary.Builders
             StringBuilder attributeBuilder = new();
             int tabs = 2;
 
+            attributeBuilder.Append($"{OH(1, tabs)}{_marker}{statsContainer.collection.Name}+");// START MARKER
+
             attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}Rarity> {statsContainer.collection.Name}Rarity " + "{ get; set; }");
             
             foreach (var item in statsContainer.traitsIncluded)
@@ -50,6 +86,7 @@ namespace WenRarityLibrary.Builders
                 attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}{item}Rarity> {statsContainer.collection.Name}{item}Rarity " +
                 "{ get; set; }");
             }
+            attributeBuilder.Append($"{OH(1, tabs)}{_marker}{statsContainer.collection.Name}-");// END MARKER
 
             string newText = attributeBuilder.ToString();
 
@@ -125,8 +162,6 @@ namespace WenRarityLibrary.Builders
                 _fileIO.Write(sb.ToString(), fileLoc);
             }
         }
-        private string EasyID()
-            => $"{OH(1, 2)}[Key]{OH(1, 2)}[DatabaseGenerated(DatabaseGeneratedOption.Identity)]{OH(1, 2)} public int id" + "{ get; set; }";
 
         private void CreateDirectory(Collection collection)
         {

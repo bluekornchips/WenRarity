@@ -1,5 +1,4 @@
-﻿using WenRarityLibrary;
-using WenRarityLibrary.ADO.Blockfrost.Models;
+using WenRarityLibrary;
 using WenRarityLibrary.ADO.Rime;
 using WenRarityLibrary.ADO.Rime.Models.Rarity.Token;
 
@@ -13,18 +12,9 @@ namespace Stats.Controller
 
         private static Ducky _ducky = Ducky.Instance;
 
-        public bool CheckTokenExists(Collection collection)
-        {
-            using RimeADO context = new();
-            switch (collection.Name)
-            {
-                //##_:switch+
-                case "KBot": return context.KBotRarity.Any();
-                default: return false;
-            }
-        }
-
         //##_:update+
+		
+		
         public void UpdateKBotRarity_Pet(List<KBotPetRarity> values)
         {
             using RimeADO context = new();
@@ -45,3 +35,21 @@ namespace Stats.Controller
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

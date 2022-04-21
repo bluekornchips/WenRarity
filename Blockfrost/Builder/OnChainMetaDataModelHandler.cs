@@ -1,4 +1,4 @@
-using Blockfrost.ADO;
+using WenRarityLibrary.ADO.Blockfrost;
 using WenRarityLibrary;
 using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;
 
@@ -31,8 +31,29 @@ namespace Blockfrost.Builder
 			}
 		}
 		//##_:KBot-
+		
+
+        public void Add()
+        {
+
+        }
+		
+		
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,7 +1,6 @@
-﻿using Blockfrost.ADO;
-using WenRarityLibrary;
+﻿using WenRarityLibrary;
+using WenRarityLibrary.ADO.Blockfrost;
 using WenRarityLibrary.ADO.Blockfrost.Models;
-using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;
 
 namespace Stats.Controller
 {
@@ -18,14 +17,6 @@ namespace Stats.Controller
             using BlockfrostADO context = new();
             collection = context.Collection.Where(i => i.Name == name).FirstOrDefault();
         }
-
         //##_:
-        //##_:KBot+
-        public void GetKBot(out List<KBot> results)
-        {
-            using BlockfrostADO context = new();
-            results = context.KBot.ToList();
-        }
-        //##_:KBot-
     }
 }

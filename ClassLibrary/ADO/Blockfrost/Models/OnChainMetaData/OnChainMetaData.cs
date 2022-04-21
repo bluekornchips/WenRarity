@@ -28,6 +28,11 @@ namespace WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData
         [Required]
         [MaxLength(150)]
         public string asset { get; set; }
+
+        [Required]
+        [MaxLength(150)]
+        public string fingerprint { get; set; }
+
         [NotMapped]
         public Dictionary<string, string> attributes { get; set; }
     }

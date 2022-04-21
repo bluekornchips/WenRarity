@@ -34,16 +34,21 @@ namespace Blockfrost.Builder
             _type = _collection.Name;
 
 
-            bool reset = true;
+            bool reset = false;
 
             // Helper for reseting data.
             if (reset)
             {
-                _blockfrostController.Delete(_collection);
                 //_blockfrostController.AddCollection(_collection);
+            }
 
+            bool FILE_CLEAR = false;
+            if (FILE_CLEAR)
+            {
+                _blockfrostController.Delete(_collection);
                 FrameworkBuilder fb = new();
                 fb.RemoveAllCollectionInfoFromFiles(_collection);
+                return;
             }
 
 
@@ -60,8 +65,6 @@ namespace Blockfrost.Builder
 
         private void NewCollection()
         {
-
-
             // Get a sample of the data from the first page.
             _blockfrostAPI.Assets_ByPolicy(_collection.PolicyId, 1, out string policyJson);
             
@@ -156,8 +159,9 @@ namespace Blockfrost.Builder
                         
                         vm.model.asset = policyItem.Asset;
                         vm.model.policy_id = _collection.PolicyId;
+                        vm.model.fingerprint = vm.fingerprint;
 
-                        //_onChainMetaDataModelHandler.Add(vm.AsModel(_type));
+                        _onChainMetaDataModelHandler.Add(vm.AsModel(_type));
                         _assets.Add(policyItem.Asset,vm.model);
 
                         if(!addedFromDb) _ducky.Info($"Added {vm.model.name}.");

@@ -53,6 +53,7 @@ namespace WenRarityLibrary.Builders
                 }
             }
 
+            built.fingerprint = deserialized["fingerprint"].ToString();
 
             foreach (JToken child in onchain_metadata.Children())
             {
@@ -120,6 +121,8 @@ namespace WenRarityLibrary.Builders
 				//##_:KBot-
 				
 				
+				
+				
                 default: return new DefaultOnChainMetaData();
             }
         }
@@ -134,6 +137,7 @@ namespace WenRarityLibrary.Builders
 		}
 
 		//##_:KBot-
+		
 		
 		
 		//private DeadRabbits HandleDeadRabbits(string json)
@@ -156,6 +160,29 @@ namespace WenRarityLibrary.Builders
 		//}
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
