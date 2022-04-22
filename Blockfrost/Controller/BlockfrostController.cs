@@ -88,22 +88,12 @@ namespace Blockfrost.Controller
         /// Helper method for deleting a collection.
         /// </summary>
         /// <param name="collection"></param>
-        public void Delete(Collection collection)
+        public void DeleteTokenTable(Collection collection)
         {
             using BlockfrostADO context = new();
             var dbContextTransaction = context.Database.BeginTransaction();
             try
             {
-                // Collection
-                context.Database.ExecuteSqlCommand($"DELETE FROM [dbo].[Collections] WHERE [PolicyId] = '{collection.PolicyId}'");
-
-                //// RawJson
-                //context.Database.ExecuteSqlCommand($"DELETE FROM BlockfrostJsons WHERE [policy_id] = '{collection.PolicyId}';");
-
-                //// Blockfrost Assets
-                //context.Database.ExecuteSqlCommand($"DELETE FROM [BlockfrostItemJson] WHERE [policy_id] = '{collection.PolicyId}';");
-                //context.Database.ExecuteSqlCommand($"DBCC CHECKIDENT ('BlockfrostItemJson', RESEED, 0);");
-
                 // OnChainMetaData
                 context.Database.ExecuteSqlCommand($"DELETE FROM {collection.DatabaseName};");
                 context.Database.ExecuteSqlCommand($"DBCC CHECKIDENT ('{collection.DatabaseName}', RESEED, 0);");
@@ -113,6 +103,28 @@ namespace Blockfrost.Controller
 
                 _ducky.Info($"Removed Table: {collection.Name}");
                 _ducky.Info($"Removed Asset records.");
+            }
+            catch (Exception ex)
+            {
+                _ducky.Critical("BlockfrostController", "Reset", ex.Message);
+                dbContextTransaction.Rollback();
+                throw;
+            }
+        }
+
+        public void DeleteFromCollectionTable(Collection collection)
+        {
+            using BlockfrostADO context = new();
+            var dbContextTransaction = context.Database.BeginTransaction();
+            try
+            {
+                // Collection
+                context.Database.ExecuteSqlCommand($"DELETE FROM [dbo].[Collections] WHERE [PolicyId] = '{collection.PolicyId}'");
+
+                context.SaveChanges();
+                dbContextTransaction.Commit();
+
+                _ducky.Info($"Removed from Collection Table: {collection.Name}");
             }
             catch (Exception ex)
             {
@@ -136,6 +148,18 @@ namespace Blockfrost.Controller
                 switch (collection)
                 {
                     //##_:
+					//##_:FalseIdols+
+					case "FalseIdols" :
+						var foundFalseIdols = context.FalseIdols.ToList();
+						foreach (var item in foundFalseIdols) items.Add(item.asset, item);
+						break;
+					//##_:FalseIdols-
+					
+					
+					
+					
+					
+					
 					//##_:PuurrtyCatsSociety+
 					case "PuurrtyCatsSociety" :
 						var foundPuurrtyCatsSociety = context.PuurrtyCatsSociety.ToList();
@@ -160,6 +184,31 @@ namespace Blockfrost.Controller
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

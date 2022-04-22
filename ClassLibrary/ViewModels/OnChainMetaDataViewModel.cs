@@ -23,6 +23,15 @@ namespace WenRarityLibrary.ViewModels
             switch (type)
             {
                 //##_:
+				//##_:FalseIdols+
+				case "FalseIdols": return (FalseIdols)model;
+				//##_:FalseIdols-
+				
+				
+				
+				
+				
+				
 				//##_:PuurrtyCatsSociety+
 				case "PuurrtyCatsSociety": return (PuurrtyCatsSociety)model;
 				//##_:PuurrtyCatsSociety-
@@ -34,6 +43,39 @@ namespace WenRarityLibrary.ViewModels
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

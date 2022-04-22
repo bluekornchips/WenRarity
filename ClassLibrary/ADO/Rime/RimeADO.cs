@@ -8,6 +8,22 @@ namespace WenRarityLibrary.ADO.Rime
         public RimeADO() : base("Rime") { }
 
         //##_:
+		//##_:FalseIdols+
+		public virtual DbSet<FalseIdolsRarity> FalseIdolsRarity { get; set; }
+		public virtual DbSet<FalseIdolsTraitCountRarity> FalseIdolsTraitCountRarity{ get; set; }
+		public virtual DbSet<FalseIdolsBackRarity> FalseIdolsBackRarity { get; set; }
+		public virtual DbSet<FalseIdolsFaceRarity> FalseIdolsFaceRarity { get; set; }
+		public virtual DbSet<FalseIdolsHeadRarity> FalseIdolsHeadRarity { get; set; }
+		public virtual DbSet<FalseIdolsOutfitRarity> FalseIdolsOutfitRarity { get; set; }
+		public virtual DbSet<FalseIdolsCharacterRarity> FalseIdolsCharacterRarity { get; set; }
+		public virtual DbSet<FalseIdolsBackgroundRarity> FalseIdolsBackgroundRarity { get; set; }
+		//##_:FalseIdols-
+		
+		
+		
+		
+		
+		
 		//##_:PuurrtyCatsSociety+
 		public virtual DbSet<PuurrtyCatsSocietyRarity> PuurrtyCatsSocietyRarity { get; set; }
 		public virtual DbSet<PuurrtyCatsSocietyTraitCountRarity> PuurrtyCatsSocietyTraitCountRarity{ get; set; }
@@ -71,6 +87,19 @@ namespace WenRarityLibrary.ADO.Rime
 		
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

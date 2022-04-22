@@ -45,7 +45,7 @@
             client.DefaultRequestHeaders.Add("project_id", _queryToken);
             try
             {
-                //a = client.GetStringAsync($"{_asset}/policy/{policy}?page={page}&order=desc").Result;
+                //json = client.GetStringAsync($"{_asset}/policy/{policyId}?page={page}&order=desc").Result;
                 json = client.GetStringAsync($"{_asset}/policy/{policyId}?page={page}").Result;
             }
             catch (Exception ex)

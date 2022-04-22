@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WenRarityLibrary", "ClassLi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blockfrost", "Blockfrost\Blockfrost.csproj", "{0EDFE36D-00BC-4853-B613-0C220E467EB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stats", "Stats\Stats.csproj", "{B40E949E-7798-4D46-8C06-AD8848FE5650}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stats", "Stats\Stats.csproj", "{B40E949E-7798-4D46-8C06-AD8848FE5650}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

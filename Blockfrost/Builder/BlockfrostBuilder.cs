@@ -17,12 +17,12 @@ namespace Blockfrost.Builder
         private BlockfrostBuilder() { }
 
 
-        private static Ducky _ducky = Ducky.Instance;
+        Ducky _ducky = Ducky.Instance;
         BlockfrostController _blockfrostController = BlockfrostController.Instance;
         JsonBuilder _jsonBuilder = JsonBuilder.Instance;
         BlockfrostAPI _blockfrostAPI = BlockfrostAPI.Instance;
         OnChainMetaDataModelHandler _onChainMetaDataModelHandler = OnChainMetaDataModelHandler.Instance;
-        private static FrameworkDirector frameworkDirector = FrameworkDirector.Instance;
+        FrameworkDirector frameworkDirector = FrameworkDirector.Instance;
 
         private Dictionary<string, OnChainMetaData> _assets = new();
         private string _type = "DefaultOnChainMetaData";
@@ -33,28 +33,41 @@ namespace Blockfrost.Builder
             _collection = collection;
             _type = _collection.Name;
 
-            bool FILE_CLEAR = false;
-            if (FILE_CLEAR)
-            {
-                FrameworkBuilder fb = new();
-                _blockfrostController.Delete(_collection);
-                fb.RemoveAllCollectionInfoFromFiles(_collection);
-                return;
-            }
+            //bool hardReset = false;
+            //if (hardReset)
+            //{
+            //    FrameworkBuilder fb = new();
+            //    _blockfrostController.Delete(_collection, true);
+            //    fb.RemoveAllCollectionInfoFromFiles(_collection);
+            //    return;
+            //}
 
+
+
+            //bool softReset = true;
+
+            //if (softReset)
+            //{
+            //    _blockfrostController.Delete(_collection, false);
+            //}
 
             if (!_blockfrostController.CollectionExists(_collection.PolicyId))
             {
-                NewCollection();
-                return;
+                bool overwrite = false;
+
+                if (NewCollection(overwrite))
+                {
+                    return;
+                };
             }
 
+            _blockfrostController.DeleteTokenTable(collection);
 
-            ExisitingRecords();
+            ExistingRecords();
             RetrieveJson();
         }
 
-        private void NewCollection()
+        private bool NewCollection(bool overwrite = false)
         {
             // Get a sample of the data from the first page.
             _blockfrostAPI.Assets_ByPolicy(_collection.PolicyId, 1, out string policyJson);
@@ -75,19 +88,20 @@ namespace Blockfrost.Builder
             _jsonBuilder.AsCIPStandardModel(assetJson, _type, out OnChainMetaDataViewModel vm);
 
             // Create the framework token.
-            frameworkDirector.bf.CreateToken(_collection, vm);
+            frameworkDirector.bf.CreateToken(_collection, vm, overwrite, out bool isNewCollection);
 
             // Add the collection to the db.
             _blockfrostController.AddCollection(_collection);
 
             // Complain if any errors.
-            if (!frameworkDirector.bf.Build(_collection, vm, out string status)) throw new Exception(status);
+            if (!frameworkDirector.bf.Build(_collection, vm)) throw new Exception("");
+            return isNewCollection;
         }
 
         /// <summary>
         /// Get existing records, if any.
         /// </summary>
-        public void ExisitingRecords()
+        public void ExistingRecords()
         {
             _blockfrostController.GetOnChainMetaDataAsModel(_collection.Name, out _assets);
         }

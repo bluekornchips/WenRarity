@@ -45,6 +45,14 @@ collection = new Collection()
 //    RealName = "Dead Rabbit Resurrection Society"
 //};
 
+collection = new Collection()
+{
+    PolicyId = "76d51276ff5d4616fa87fe5e398f09110e9f085a26b44f07130b57a9",
+    Name = "FalseIdols",
+    DatabaseName = "FalseIdols",
+    RealName = "False Idols"
+};
+
 
 
 

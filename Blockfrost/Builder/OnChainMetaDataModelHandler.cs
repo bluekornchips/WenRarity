@@ -13,6 +13,34 @@ namespace Blockfrost.Builder
         private static Ducky _ducky = Ducky.Instance;
 
         //##_:
+		//##_:FalseIdols+
+		public void Add(FalseIdols item)
+		{
+			using BlockfrostADO context = new();
+			var trans = context.Database.BeginTransaction();
+			try
+			{
+				context.FalseIdols.Add(item);
+				trans.Commit();
+				context.SaveChanges();
+			}
+			catch (Exception ex)
+			{
+				trans.Rollback();
+				_ducky.Error("OnChainMetaDataModelHandler", "Add(FalseIdols)", ex.Message);
+			}
+		}
+		//##_:FalseIdols-
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		//##_:PuurrtyCatsSociety+
 		public void Add(PuurrtyCatsSociety item)
 		{
@@ -59,6 +87,31 @@ namespace Blockfrost.Builder
 		
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
