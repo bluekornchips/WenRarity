@@ -1,4 +1,7 @@
 ﻿using Stats.Builders;
 
 StatsBuilder sb = StatsBuilder.Instance;
-sb.Build();
+string name = "KBot";
+name = "PuurrtyCatsSociety";
+
+sb.Build(name);

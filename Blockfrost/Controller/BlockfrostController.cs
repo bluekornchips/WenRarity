@@ -136,15 +136,18 @@ namespace Blockfrost.Controller
                 switch (collection)
                 {
                     //##_:
+					//##_:PuurrtyCatsSociety+
+					case "PuurrtyCatsSociety" :
+						var foundPuurrtyCatsSociety = context.PuurrtyCatsSociety.ToList();
+						foreach (var item in foundPuurrtyCatsSociety) items.Add(item.asset, item);
+						break;
+					//##_:PuurrtyCatsSociety-
 					//##_:KBot+
 					case "KBot" :
 						var foundKBot = context.KBot.ToList();
 						foreach (var item in foundKBot) items.Add(item.asset, item);
 						break;
 					//##_:KBot-
-					
-					
-					
                     default:
                         break;
                 }
@@ -157,26 +160,6 @@ namespace Blockfrost.Controller
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

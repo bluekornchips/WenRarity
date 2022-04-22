@@ -33,8 +33,11 @@ namespace WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData
         [MaxLength(150)]
         public string fingerprint { get; set; }
 
+        [Required]
+        public int traitCount { get; set; }
+
         [NotMapped]
-        public Dictionary<string, string> attributes { get; set; }
+        public Dictionary<string, string> attributes { get; set; } = new Dictionary<string, string>();
     }
 
     public class DefaultOnChainMetaData : OnChainMetaData

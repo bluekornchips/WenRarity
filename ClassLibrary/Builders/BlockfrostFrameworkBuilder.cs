@@ -41,6 +41,10 @@ namespace WenRarityLibrary.Builders
                 return false;
             }
 
+            // Greasy stop to prevent doubling up the existing code when I move between computers
+            // TODO: Make this programmatic to check whether the files contain the info already or not.
+            //if (!update) return true;
+
             Update_BlockfrostADO(collection);
             Update_ViewModelSwitch(collection);
             UpdateJsonBuilder_Handle(collection, vm);

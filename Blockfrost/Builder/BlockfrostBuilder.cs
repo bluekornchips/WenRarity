@@ -33,20 +33,11 @@ namespace Blockfrost.Builder
             _collection = collection;
             _type = _collection.Name;
 
-
-            bool reset = false;
-
-            // Helper for reseting data.
-            if (reset)
-            {
-                //_blockfrostController.AddCollection(_collection);
-            }
-
             bool FILE_CLEAR = false;
             if (FILE_CLEAR)
             {
-                _blockfrostController.Delete(_collection);
                 FrameworkBuilder fb = new();
+                _blockfrostController.Delete(_collection);
                 fb.RemoveAllCollectionInfoFromFiles(_collection);
                 return;
             }
@@ -120,7 +111,7 @@ namespace Blockfrost.Builder
 
             int page = 0;
             int matchCount = 0;
-
+            _ducky.Info($"Building collection for {_collection.Name}.");
             do
             {
                 _blockfrostAPI.Assets_ByPolicy(_collection.PolicyId, ++page, out string policyJson);

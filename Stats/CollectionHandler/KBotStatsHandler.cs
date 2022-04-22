@@ -1,11 +1,7 @@
-
 using Stats.Controller;
-using System.ComponentModel.DataAnnotations;
 using WenRarityLibrary.ADO.Blockfrost;
-using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;
 using WenRarityLibrary.ADO.Rime;
 using WenRarityLibrary.ADO.Rime.Models.Rarity.Token;
-
 
 namespace Stats.Builders
 {
@@ -18,10 +14,10 @@ namespace Stats.Builders
 			using BlockfrostADO bfContext = new();
 			var tokens = bfContext.KBot.ToList();
 
+			_ducky.Info($"Found {tokens.Count()} tokens for KBot");
 
 			if (tokens != null)
 			{
-				_ducky.Info($"Found{tokens.Count()} tokens for KBot");
 				// Pet
 				var pet = tokens.GroupBy(t => t.Pet);
 				var petItems = new List<KBotPetRarity>();

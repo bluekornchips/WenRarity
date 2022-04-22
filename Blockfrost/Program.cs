@@ -19,13 +19,13 @@ var collection = new Collection()
 //    RealName = "DeluxeBot OG Collection"
 //};
 
-//var collection = new Collection()
-//{
-//    PolicyId = "f96584c4fcd13cd1702c9be683400072dd1aac853431c99037a3ab1e",
-//    Name = "PuurrtyCatsSociety",
-//    DatabaseName = "PuurrtyCatsSociety",
-//    RealName = "Puurrty Cats Society"
-//};
+collection = new Collection()
+{
+    PolicyId = "f96584c4fcd13cd1702c9be683400072dd1aac853431c99037a3ab1e",
+    Name = "PuurrtyCatsSociety",
+    DatabaseName = "PuurrtyCatsSociety",
+    RealName = "Puurrty Cats Society"
+};
 
 
 //var collection = new Collection()

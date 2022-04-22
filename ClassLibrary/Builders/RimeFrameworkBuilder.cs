@@ -80,12 +80,14 @@ namespace WenRarityLibrary.Builders
             attributeBuilder.Append($"{OH(1, tabs)}{_marker}{statsContainer.collection.Name}+");// START MARKER
 
             attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}Rarity> {statsContainer.collection.Name}Rarity " + "{ get; set; }");
-            
+            attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}TraitCountRarity> {statsContainer.collection.Name}TraitCountRarity" + "{ get; set; }");
+
             foreach (var item in statsContainer.traitsIncluded)
             {
-                attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}{item}Rarity> {statsContainer.collection.Name}{item}Rarity " +
+                attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1) }Rarity> {statsContainer.collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1) }Rarity " +
                 "{ get; set; }");
             }
+
             attributeBuilder.Append($"{OH(1, tabs)}{_marker}{statsContainer.collection.Name}-");// END MARKER
 
             string newText = attributeBuilder.ToString();
@@ -139,7 +141,7 @@ namespace WenRarityLibrary.Builders
             {
                 tabs = 1;
                 sb.Clear();
-                attributeName = $"{ statsContainer.collection.Name }{ item }";
+                attributeName = $"{ statsContainer.collection.Name }{ item.Substring(0,1).ToUpper() + item.Substring(1) }";
 
                 string fileLoc = thisAssetDir + $"{ attributeName }Rarity.cs";
 
@@ -155,6 +157,35 @@ namespace WenRarityLibrary.Builders
                 // Attribute - Count
                 sb.Append(EasyID());
                 sb.Append($"{OH(1, tabs)}public string {item}" + " { get; set; }");
+                sb.Append($"{OH(1, tabs)}public int Count" + " { get; set; }");
+                sb.Append($"{OH(1, 1)}" + "}");
+                sb.Append($"{OH(1, 0)}" + "}");
+
+                _fileIO.Write(sb.ToString(), fileLoc);
+            }
+
+            // Trait Count
+            if (statsContainer.includeTraitCount)
+            {
+                tabs = 1;
+                sb.Clear();
+
+                attributeName = $"{ statsContainer.collection.Name }TraitCount";
+
+                string fileLoc = thisAssetDir + $"{ attributeName }Rarity.cs";
+
+                // Header
+                sb.Append("using System.ComponentModel.DataAnnotations;");
+                sb.Append($"{OH(1, tabs)}using System.ComponentModel.DataAnnotations.Schema;");
+                sb.Append($"{OH(2, 0)}namespace WenRarityLibrary.ADO.Rime.Models.Rarity.Token");
+                sb.Append($"{OH(1, 0)}" + "{");
+                sb.Append($"{OH(1, tabs)}[Table(\"{attributeName}Rarity\")]");
+                sb.Append($"{OH(1, tabs)}public partial class {attributeName}Rarity");
+                sb.Append($"{OH(1, tabs++)}" + "{");
+
+                // Attribute - Count
+                sb.Append(EasyID());
+                sb.Append($"{OH(1, tabs)}public int traitCount" + " { get; set; }");
                 sb.Append($"{OH(1, tabs)}public int Count" + " { get; set; }");
                 sb.Append($"{OH(1, 1)}" + "}");
                 sb.Append($"{OH(1, 0)}" + "}");

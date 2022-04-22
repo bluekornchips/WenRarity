@@ -54,6 +54,7 @@ namespace WenRarityLibrary.Builders
             }
 
             built.fingerprint = deserialized["fingerprint"].ToString();
+            built.model.traitCount = 0;
 
             foreach (JToken child in onchain_metadata.Children())
             {
@@ -67,7 +68,10 @@ namespace WenRarityLibrary.Builders
                     AttributeHelper(property, out bool valid);
                     string value = AttributeCleaner(property.Value.ToString());
                     string safeName = property.Name.Replace(" ", ""); // Replace spaces
-
+                    if(value != "" && value != "None")
+                    {
+                        built.model.traitCount++;
+                    }
                     if (valid) built.attributes.Add(safeName, value);
                 }
             }
@@ -116,6 +120,9 @@ namespace WenRarityLibrary.Builders
             switch (type)
             {
                 //##_:switch+
+				//##_:PuurrtyCatsSociety+
+				case "PuurrtyCatsSociety":return HandlePuurrtyCatsSociety(json);
+				//##_:PuurrtyCatsSociety-
 				//##_:KBot+
 				case "KBot":return HandleKBot(json);
 				//##_:KBot-
@@ -128,6 +135,14 @@ namespace WenRarityLibrary.Builders
         }
 
         //##_:handle+
+		//##_:PuurrtyCatsSociety+
+		private PuurrtyCatsSociety HandlePuurrtyCatsSociety(string json)
+		{
+			PuurrtyCatsSociety model = JsonConvert.DeserializeObject<PuurrtyCatsSociety>(json);
+			return model;
+		}
+
+		//##_:PuurrtyCatsSociety-
 		//##_:KBot+
 		private KBot HandleKBot(string json)
 		{
@@ -160,6 +175,26 @@ namespace WenRarityLibrary.Builders
 		//}
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

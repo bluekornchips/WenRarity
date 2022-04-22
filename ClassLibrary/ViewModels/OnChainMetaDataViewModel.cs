@@ -23,17 +23,28 @@ namespace WenRarityLibrary.ViewModels
             switch (type)
             {
                 //##_:
+				//##_:PuurrtyCatsSociety+
+				case "PuurrtyCatsSociety": return (PuurrtyCatsSociety)model;
+				//##_:PuurrtyCatsSociety-
 				//##_:KBot+
 				case "KBot": return (KBot)model;
 				//##_:KBot-
-				
-				
-				
                 default: return model;
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

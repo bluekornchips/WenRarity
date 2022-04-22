@@ -21,10 +21,8 @@ namespace Stats.Builders
 
         private static StatsContainer _stats = new StatsContainer();
 
-        public void Build()
+        public void Build(string name)
         {
-            string name = "KBot";
-
             _bfController.CollectionByName(name, out Collection collection);
             if (collection == null)
             {
@@ -39,8 +37,13 @@ namespace Stats.Builders
 
             AttributesForRarity();
 
-            _rimefb.CreateToken(_stats);
-            _statsfb.Build(collection, _stats);
+
+            if (!_statsfb.CollectionExists(name))
+            {
+                _rimefb.CreateToken(_stats);
+                _statsfb.Build(collection, _stats);
+                return;
+            }
 
             //if (!_rimeController.CheckTokenExists(collection))
             //{
@@ -52,7 +55,6 @@ namespace Stats.Builders
 
             //ClearAttributeTables();
             PopulateAttributeTables();
-
         }
 
         private void PopulateAttributeTables()
@@ -60,6 +62,25 @@ namespace Stats.Builders
             switch (_stats.collection.Name)
             {
                 //##_:populate+
+				//##_:PuurrtyCatsSociety+
+				case "PuurrtyCatsSociety":
+					_statsb.statsHandler = new PuurrtyCatsSocietyStatsHandler();
+					_statsb.statsHandler.Handle();
+					_statsb.statsHandler.GenerateCollectionRarity_SQL();
+					break;
+				//##_:PuurrtyCatsSociety-
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				//##_:KBot+
 				case "KBot":
 					_statsb.statsHandler = new KBotStatsHandler();
@@ -67,10 +88,6 @@ namespace Stats.Builders
 					_statsb.statsHandler.GenerateCollectionRarity_SQL();
 					break;
 				//##_:KBot-
-				
-				
-				
-				
 				
                 default:
                     break;
@@ -88,12 +105,66 @@ namespace Stats.Builders
                         "Pet"
                     };
                     break;
+                case "PuurrtyCatsSociety":
+                    _stats.traitsIncluded = new List<string>()
+                    {
+                        "fur",
+                        "hat",
+                        "eyes",
+                        "mask",
+                        "tail",
+                        "hands",
+                        "mouth",
+                        "wings",
+                        "outfit",
+                        "background"
+                    };
+                    _stats.includeTraitCount = true;
+                    break;
                 default:
                     break;
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

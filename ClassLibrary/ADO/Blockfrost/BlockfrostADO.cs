@@ -11,6 +11,10 @@ namespace WenRarityLibrary.ADO.Blockfrost
         public virtual DbSet<BlockfrostItemJson> BlockfrostItemJson { get; set; }
         public virtual DbSet<Collection> Collection { get; set; }
         //##_:tokens+
+		//##_:PuurrtyCatsSociety+
+		public virtual DbSet<PuurrtyCatsSociety> PuurrtyCatsSociety { get; set; }
+		//##_:PuurrtyCatsSociety-
+		
 		//##_:KBot+
 		public virtual DbSet<KBot> KBot { get; set; }
 		//##_:KBot-
@@ -21,6 +25,17 @@ namespace WenRarityLibrary.ADO.Blockfrost
         //##_:tokens-
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
