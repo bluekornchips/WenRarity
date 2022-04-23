@@ -13,6 +13,13 @@ namespace WenRarityLibrary.Builders
             DirectorySafetyChecks();
         }
 
+        /// <summary>
+        /// Create the Token if it does not exist already.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="vm"></param>
+        /// <param name="overwrite"></param>
+        /// <param name="isNewCollection"></param>
         public void CreateToken(Collection collection, OnChainMetaDataViewModel vm, bool overwrite, out bool isNewCollection)
         {
             // If the token already exists and overwrite is false, we don't want to change it.
@@ -37,7 +44,7 @@ namespace WenRarityLibrary.Builders
             Update_BlockfrostADO(collection);
             Update_ViewModelSwitch(collection);
             UpdateJsonBuilder_Handle(collection, vm);
-            UpdateJsonBuilder_Switch(collection, vm);
+            UpdateJsonBuilder_Switch(collection);
             Update_OnChainMetaDataModelHandler(collection);
             Update_BlockfrostController(collection);
 
@@ -64,8 +71,6 @@ namespace WenRarityLibrary.Builders
         /// <param name="vm"></param>
         private void AddToken(Collection collection, OnChainMetaDataViewModel vm, string fileLoc)
         {
-            
-            
             StringBuilder sb = new();
             int tabs = 1;
 
@@ -96,7 +101,10 @@ namespace WenRarityLibrary.Builders
             _fileIO.Write(sb.ToString(), fileLoc);
         }
 
-
+        /// <summary>
+        /// Update the BlockfrostController file with the new Collection items
+        /// </summary>
+        /// <param name="collection"></param>
         private void Update_BlockfrostController(Collection collection)
         {
             StringBuilder sb = new();
@@ -113,14 +121,13 @@ namespace WenRarityLibrary.Builders
             // GetOnChainMetaData
             StringBuilder sbHandler = new();
             int tabs = 5;
-            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}+");// START MARKER
 
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}+"); // START MARKER
             sbHandler.Append($"{OH(1, tabs++)}case \"{collection.Name}\" :");
             sbHandler.Append($"{OH(1, tabs)}var found{collection.Name} = context.{collection.Name}.ToList();");
             sbHandler.Append($"{OH(1, tabs)}foreach (var item in found{collection.Name}) items.Add(item.asset, item);");
             sbHandler.Append($"{OH(1, tabs--)}break;");
-
-            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}-");// END MARKER
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}-"); // END MARKER
 
             string newText = sbHandler.ToString();
 
@@ -132,7 +139,10 @@ namespace WenRarityLibrary.Builders
             _fileIO.Write(sb.ToString(), fileLoc);
         }
 
-
+        /// <summary>
+        /// Update the OnChainMetaDataModelHandler director.
+        /// </summary>
+        /// <param name="collection"></param>
         private void Update_OnChainMetaDataModelHandler(Collection collection)
         {
             StringBuilder sb = new();
@@ -150,8 +160,7 @@ namespace WenRarityLibrary.Builders
             StringBuilder sbHandler = new();
             int tabs = 2;
 
-            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}+");// START MARKER
-
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}+"); // START MARKER
             sbHandler.Append($"{OH(1, tabs)}public void Add({collection.Name} item)");
             sbHandler.Append($"{OH(1, tabs++)}" + "{");
             sbHandler.Append($"{OH(1, tabs)}using BlockfrostADO context = new();");
@@ -167,10 +176,8 @@ namespace WenRarityLibrary.Builders
             sbHandler.Append($"{OH(1, tabs)}trans.Rollback();");
             sbHandler.Append($"{OH(1, tabs--)}_ducky.Error(\"OnChainMetaDataModelHandler\", \"Add({collection.Name})\", ex.Message);");
             sbHandler.Append($"{OH(1, tabs--)}" + "}");
-
             sbHandler.Append($"{OH(1, tabs)}" + "}");
-
-            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}-");// END MARKER
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}-"); // END MARKER
 
             string newText = sbHandler.ToString();
 
@@ -182,6 +189,11 @@ namespace WenRarityLibrary.Builders
             _fileIO.Write(sb.ToString(), fileLoc);
         }
 
+        /// <summary>
+        /// Update the BlockfrostADO file
+        /// NOT in the Blockfrost Project - in the Class Library
+        /// </summary>
+        /// <param name="collection"></param>
         private void Update_BlockfrostADO(Collection collection)
         {
             StringBuilder sb = new();
@@ -195,12 +207,10 @@ namespace WenRarityLibrary.Builders
             string fileStartToMarker = readText.Substring(0, startLoc);
             string filerMarkerToEnd = readText.Substring(startLoc + startToken.Length);
 
-            string newText = $"{OH(1, 2)}{_marker}{collection.Name}+";// START MARKER
-
+            string newText = $"{OH(1, 2)}{_marker}{collection.Name}+"; // START MARKER
             newText += $"{OH(1,2)}public virtual DbSet<{collection.Name}> {collection.Name} " +
                 "{ get; set; }";
-
-            newText +=$"{OH(1, 2)}{_marker}{collection.Name}-";// END MARKER
+            newText +=$"{OH(1, 2)}{_marker}{collection.Name}-"; // END MARKER
 
             sb.Append(fileStartToMarker);
             sb.Append(startToken);
@@ -210,6 +220,10 @@ namespace WenRarityLibrary.Builders
             _fileIO.Write(sb.ToString(), fileLoc);
         }
 
+        /// <summary>
+        /// Update the ViewModel Switch statement
+        /// </summary>
+        /// <param name="collection"></param>
         private void Update_ViewModelSwitch(Collection collection)
         {
             StringBuilder sb = new();
@@ -223,11 +237,9 @@ namespace WenRarityLibrary.Builders
             string fileStartToMarker = readText.Substring(0, startLoc);
             string filerMarkerToEnd = readText.Substring(startLoc + startToken.Length);
 
-            string newText = $"{OH(1, 4)}{_marker}{collection.Name}+";// START MARKER
-
+            string newText = $"{OH(1, 4)}{_marker}{collection.Name}+"; // START MARKER
             newText += $"{OH(1, 4)}case \"{collection.Name}\": return ({collection.Name})model;";
-
-            newText += $"{OH(1, 4)}{_marker}{collection.Name}-";// END MARKER
+            newText += $"{OH(1, 4)}{_marker}{collection.Name}-"; // END MARKER
 
             sb.Append(fileStartToMarker);
             sb.Append(startToken);
@@ -238,10 +250,13 @@ namespace WenRarityLibrary.Builders
         }
 
 
-        private void UpdateJsonBuilder_Switch(Collection collection, OnChainMetaDataViewModel vm)
+        /// <summary>
+        /// Update the JsonBuilder Switch statement.
+        /// </summary>
+        /// <param name="collection"></param>
+        private void UpdateJsonBuilder_Switch(Collection collection)
         {
             StringBuilder sb = new();
-            int tabs = 2;
 
             string fileLoc = blockFrostDir + $"\\Builder\\JsonBuilder.cs";
             string startToken = _marker + "switch+";
@@ -252,11 +267,9 @@ namespace WenRarityLibrary.Builders
             string fileStartToMarker = readText.Substring(0, startLoc);
             string filerMarkerToEnd = readText.Substring(startLoc + startToken.Length);
 
-            string newText = $"{OH(1, 4)}{_marker}{collection.Name}+";// START MARKER
-
+            string newText = $"{OH(1, 4)}{_marker}{collection.Name}+"; // START MARKER
             newText += $"{OH(1,4)}case \"{collection.Name}\":return Handle{collection.Name}(json);";
-
-            newText += $"{OH(1, 4)}{_marker}{collection.Name}-";// END MARKER
+            newText += $"{OH(1, 4)}{_marker}{collection.Name}-"; // END MARKER
 
             sb.Append(fileStartToMarker);
             sb.Append(startToken);
@@ -266,7 +279,11 @@ namespace WenRarityLibrary.Builders
             _fileIO.Write(sb.ToString(), fileLoc);
         }
 
-
+        /// <summary>
+        /// Update the JsonBuilder file Handle area.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="vm"></param>
         private void UpdateJsonBuilder_Handle(Collection collection, OnChainMetaDataViewModel vm)
         {
             StringBuilder sb = new();
@@ -281,12 +298,10 @@ namespace WenRarityLibrary.Builders
             string fileStartToMarker = readText.Substring(0, startLoc);
             string filerMarkerToEnd = readText.Substring(startLoc + startToken.Length);
 
-
             // Attributes
             StringBuilder sbHandler = new();
 
-            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}+");// START MARKER
-
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}+"); // START MARKER
             sbHandler.Append($"{OH(1, tabs)}private {collection.Name} Handle{collection.Name}(string json)");
             sbHandler.Append($"{OH(1, tabs++)}" + "{");
             sbHandler.Append($"{OH(1, tabs)}{collection.Name} model = JsonConvert.DeserializeObject<{collection.Name}>(json);");
@@ -297,8 +312,7 @@ namespace WenRarityLibrary.Builders
             sbHandler.Append($"{OH(1, tabs--)}return model;");
             sbHandler.Append($"{OH(1, tabs)}" + "}");
             sbHandler.Append($"{OH(1, 0)}");
-
-            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}-");// END MARKER
+            sbHandler.Append($"{OH(1, tabs)}{_marker}{collection.Name}-"); // END MARKER
 
             string newText = sbHandler.ToString();
 
@@ -310,6 +324,11 @@ namespace WenRarityLibrary.Builders
             _fileIO.Write(sb.ToString(), fileLoc);
         }
 
+
+        /// <summary>
+        /// Remove all code blocks in the Blockfrost Collection for the given Collection
+        /// </summary>
+        /// <param name="collection"></param>
         protected void RemoveCollectionFiles(Collection collection)
         {
             _ducky.Info($"Removing file information for {collection.Name} in the Blockfrost Project...");
@@ -330,6 +349,7 @@ namespace WenRarityLibrary.Builders
                         int indexOfPlus = readText.IndexOf($"{markerStr}+");
                         int indexOfMinus = readText.IndexOf($"{markerStr}-");
                         string spliced = Splice(readText.AsSpan(0, indexOfPlus).ToString(), readText.AsSpan(indexOfMinus + markerStr.Length + 1).ToString());
+                        
                         do
                         {
                             indexOfPlus = spliced.IndexOf($"{markerStr}+");

@@ -8,7 +8,7 @@ namespace WenRarityLibrary.ADO.Rime.Models.Rarity.Token
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		 public int id{ get; set; }
+		public int id{ get; set; }
 		public double Back { get; set; }
 		public double Face { get; set; }
 		public double Head { get; set; }

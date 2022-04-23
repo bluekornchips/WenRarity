@@ -10,10 +10,24 @@ namespace Blockfrost.Builder
         public static OnChainMetaDataModelHandler Instance => instance ?? (instance = new OnChainMetaDataModelHandler());
         private OnChainMetaDataModelHandler() { }
 
-        private static Ducky _ducky = Ducky.Instance;
-
-        //##_:
-		//##_:FalseIdols+
+        private static Ducky _ducky = Ducky.Instance;//##_://##_:DeadRabbits+
+		public void Add(DeadRabbits item)
+		{
+			using BlockfrostADO context = new();
+			var trans = context.Database.BeginTransaction();
+			try
+			{
+				context.DeadRabbits.Add(item);
+				trans.Commit();
+				context.SaveChanges();
+			}
+			catch (Exception ex)
+			{
+				trans.Rollback();
+				_ducky.Error("OnChainMetaDataModelHandler", "Add(DeadRabbits)", ex.Message);
+			}
+		}
+		//##_:DeadRabbits-//##_:FalseIdols+
 		public void Add(FalseIdols item)
 		{
 			using BlockfrostADO context = new();
@@ -31,15 +45,6 @@ namespace Blockfrost.Builder
 			}
 		}
 		//##_:FalseIdols-
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		//##_:PuurrtyCatsSociety+
 		public void Add(PuurrtyCatsSociety item)
@@ -77,82 +82,5 @@ namespace Blockfrost.Builder
 			}
 		}
 		//##_:KBot-
-		
-
-        public void Add()
-        {
-
-        }
-		
-		
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

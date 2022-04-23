@@ -1,5 +1,4 @@
-﻿using WenRarityLibrary;
-using WenRarityLibrary.ADO.Blockfrost;
+﻿using WenRarityLibrary.ADO.Blockfrost;
 using WenRarityLibrary.ADO.Blockfrost.Models;
 
 namespace Stats.Controller
@@ -10,13 +9,11 @@ namespace Stats.Controller
         public static BlockfrostController Instance => _instance ?? (_instance = new BlockfrostController());
         private BlockfrostController() { }
 
-        private static Ducky _ducky = Ducky.Instance;
 
         public void CollectionByName(string name, out Collection collection)
         {
             using BlockfrostADO context = new();
             collection = context.Collection.Where(i => i.Name == name).FirstOrDefault();
         }
-        //##_:
     }
 }

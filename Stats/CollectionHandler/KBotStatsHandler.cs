@@ -1,4 +1,3 @@
-using Stats.Controller;
 using WenRarityLibrary.ADO.Blockfrost;
 using WenRarityLibrary.ADO.Rime;
 using WenRarityLibrary.ADO.Rime.Models.Rarity.Token;
@@ -7,8 +6,6 @@ namespace Stats.Builders
 {
 	public class KBotStatsHandler : BaseStatsHandler
 	{
-		private static RimeController _rimeController = RimeController.Instance;
-
 		public override void Handle()
 		{
 			using BlockfrostADO bfContext = new();

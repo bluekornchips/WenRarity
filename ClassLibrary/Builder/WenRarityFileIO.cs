@@ -6,8 +6,6 @@
         public static WenRarityFileIO Instance => instance ?? (instance = new WenRarityFileIO());
         private WenRarityFileIO() { }
 
-        private static Ducky _ducky = Ducky.Instance;
-
         /// <summary>
         /// Write file - Overwrites.
         /// </summary>

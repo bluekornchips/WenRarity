@@ -1,18 +1,11 @@
-
-using Stats.Controller;
-using System.ComponentModel.DataAnnotations;
 using WenRarityLibrary.ADO.Blockfrost;
-using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;
 using WenRarityLibrary.ADO.Rime;
 using WenRarityLibrary.ADO.Rime.Models.Rarity.Token;
-
 
 namespace Stats.Builders
 {
 	public class PuurrtyCatsSocietyStatsHandler : BaseStatsHandler
 	{
-		private static RimeController _rimeController = RimeController.Instance;
-
 		public override void Handle()
 		{
 			using BlockfrostADO bfContext = new();

@@ -9,7 +9,7 @@ namespace Stats.Builders
 
         public StatsHandler() { }
 
-        public BaseStatsHandler statsHandler { get; set; }
+        public BaseStatsHandler handler { get; set; }
     }
 
     public abstract class BaseStatsHandler

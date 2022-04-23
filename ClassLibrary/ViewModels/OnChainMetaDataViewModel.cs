@@ -21,9 +21,10 @@ namespace WenRarityLibrary.ViewModels
         public dynamic AsModel(string type)
         {
             switch (type)
-            {
-                //##_:
-				//##_:FalseIdols+
+            {//##_:
+				//##_:DeadRabbits+
+				case "DeadRabbits": return (DeadRabbits)model;
+				//##_:DeadRabbits-//##_:FalseIdols+
 				case "FalseIdols": return (FalseIdols)model;
 				//##_:FalseIdols-
 				
@@ -43,81 +44,3 @@ namespace WenRarityLibrary.ViewModels
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

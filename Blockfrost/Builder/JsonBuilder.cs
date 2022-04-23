@@ -23,7 +23,7 @@ namespace WenRarityLibrary.Builders
         {
             built = new OnChainMetaDataViewModel();
 
-            if (input == "") return;
+            if (input == "") return; // Empty input - Should never happen.
 
             JObject deserialized = JsonConvert.DeserializeObject(input) as JObject;
             BlockfrostAsset bfAsset = JsonConvert.DeserializeObject<BlockfrostAsset>(input);
@@ -37,6 +37,8 @@ namespace WenRarityLibrary.Builders
             if (onchain_metadata == null) return;
 
             built.model = GenerateOnChainMetaData(type, onchain_metadata.ToString());
+            built.model.traitCount = 0;
+            built.fingerprint = deserialized["fingerprint"].ToString();
 
             // New framework token handling.
             if(built.model.GetType().Name == "DefaultOnChainMetaData")
@@ -53,10 +55,13 @@ namespace WenRarityLibrary.Builders
                 }
             }
 
-            built.fingerprint = deserialized["fingerprint"].ToString();
-            built.model.traitCount = 0;
 
-            built.model.mediaType = "NONE";
+            // Safety Checks
+            // Required because projects do not follow standards and forget to add data. Angery.
+
+            built.model.mediaType = "NONE"; 
+
+            // Safety Checks
 
             foreach (JToken child in onchain_metadata.Children())
             {
@@ -70,19 +75,33 @@ namespace WenRarityLibrary.Builders
                     AttributeHelper(property, out bool valid);
                     string value = AttributeCleaner(property.Value.ToString());
                     string safeName = property.Name.Replace(" ", ""); // Replace spaces
-                    string safeValue = value.ToUpper();
-                    if(safeValue != "EMPTY" && safeValue != "NONE" && value != "" && !string.IsNullOrEmpty(safeValue))
-                    {
-                        built.model.traitCount++;
-                    }
                     if (valid) built.attributes.Add(safeName, value);
+                }
+            }
+
+            // Trait Counter
+            foreach (var item in built.model.attributes)
+            {
+                string value = AttributeCleaner(item.Value.ToString());
+                string safeValue = value.ToUpper();
+
+                if (safeValue != "EMPTY" && safeValue != "NONE" && value != "" && !string.IsNullOrEmpty(safeValue))
+                {
+                    built.model.traitCount++;
                 }
             }
         }
 
+        /// <summary>
+        /// Returns the json string as a collection of json items - 0 to 100 expected.
+        /// Reference: https://docs.blockfrost.io/#tag/Cardano-Assets/paths/~1assets~1policy~1{policy_id}/get
+        /// </summary>
+        /// <param name="json"></param>
+        /// <param name="items"></param>
         public void AsBlockfrostPolicyItems(string json, out List<BlockfrostPolicyItem> items)
         {
             items = new();
+
             try
             {
                 items = JsonConvert.DeserializeObject<List<BlockfrostPolicyItem>>(json);
@@ -93,11 +112,16 @@ namespace WenRarityLibrary.Builders
             }
         }
 
-
+        /// <summary>
+        /// Helper method for ignoring fields that do not follow CIP25
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <param name="valid"></param>
         private void AttributeHelper(JProperty prop, out bool valid)
         {
             valid = false;
             string lower = prop.Name.ToLower();
+
             if (lower != "name"
                 && lower != "mediatype"
                 && lower != "image"
@@ -108,6 +132,11 @@ namespace WenRarityLibrary.Builders
             }
         }
 
+        /// <summary>
+        /// Helper mehod for returning SQL Table and C# Class safe column and attribute names.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private string AttributeCleaner(string value)
         {
             value.Replace(" ", "");
@@ -118,18 +147,21 @@ namespace WenRarityLibrary.Builders
             }
         }
 
-        public OnChainMetaData GenerateOnChainMetaData(string type, string json)
+        /// <summary>
+        /// Switch handle or different _existing_ OnChainMetaData types.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        private OnChainMetaData GenerateOnChainMetaData(string type, string json)
         {
             switch (type)
-            {
-                //##_:switch+
-				//##_:FalseIdols+
+            {//##_:switch+
+				//##_:DeadRabbits+
+				case "DeadRabbits":return HandleDeadRabbits(json);
+				//##_:DeadRabbits-//##_:FalseIdols+
 				case "FalseIdols":return HandleFalseIdols(json);
 				//##_:FalseIdols-
-				
-				
-				
-				
 				//##_:PuurrtyCatsSociety+
 				case "PuurrtyCatsSociety":return HandlePuurrtyCatsSociety(json);
 				//##_:PuurrtyCatsSociety-
@@ -140,8 +172,14 @@ namespace WenRarityLibrary.Builders
             }
         }
 
-        //##_:handle+
-		//##_:FalseIdols+
+        #region Handler//##_:handle+//##_:DeadRabbits+
+		private DeadRabbits HandleDeadRabbits(string json)
+		{
+			DeadRabbits model = JsonConvert.DeserializeObject<DeadRabbits>(json);
+			return model;
+		}
+
+		//##_:DeadRabbits-//##_:FalseIdols+
 		private FalseIdols HandleFalseIdols(string json)
 		{
 			FalseIdols model = JsonConvert.DeserializeObject<FalseIdols>(json);
@@ -153,10 +191,7 @@ namespace WenRarityLibrary.Builders
 			model.Background = model.attributes.GetValueOrDefault("Background");
 			return model;
 		}
-
 		//##_:FalseIdols-
-		
-		
 		
 		
 		//##_:PuurrtyCatsSociety+
@@ -174,136 +209,8 @@ namespace WenRarityLibrary.Builders
 			model.Pet = model.attributes.GetValueOrDefault("Pet");
 			return model;
 		}
-		//##_:KBot-
+        //##_:KBot-
 
+        #endregion Hand;er
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

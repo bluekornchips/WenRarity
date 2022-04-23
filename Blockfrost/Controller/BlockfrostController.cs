@@ -13,6 +13,10 @@ namespace Blockfrost.Controller
 
         private static Ducky _ducky = Ducky.Instance;
 
+        /// <summary>
+        /// Add the Collection item to the Collection Table
+        /// </summary>
+        /// <param name="item"></param>
         public void AddCollection(Collection item)
         {
             using BlockfrostADO context = new();
@@ -34,6 +38,12 @@ namespace Blockfrost.Controller
             }
         }
 
+        /// <summary>
+        /// Returns whether the collection exists in the table or not.
+        /// Used as a soft indictator of whether we have a local state for the blockfrost class or not.
+        /// </summary>
+        /// <param name="policyId"></param>
+        /// <returns></returns>
         public bool CollectionExists(string policyId)
         {
             using BlockfrostADO context = new();
@@ -94,7 +104,6 @@ namespace Blockfrost.Controller
             var dbContextTransaction = context.Database.BeginTransaction();
             try
             {
-                // OnChainMetaData
                 context.Database.ExecuteSqlCommand($"DELETE FROM {collection.DatabaseName};");
                 context.Database.ExecuteSqlCommand($"DBCC CHECKIDENT ('{collection.DatabaseName}', RESEED, 0);");
 
@@ -112,27 +121,31 @@ namespace Blockfrost.Controller
             }
         }
 
-        public void DeleteFromCollectionTable(Collection collection)
-        {
-            using BlockfrostADO context = new();
-            var dbContextTransaction = context.Database.BeginTransaction();
-            try
-            {
-                // Collection
-                context.Database.ExecuteSqlCommand($"DELETE FROM [dbo].[Collections] WHERE [PolicyId] = '{collection.PolicyId}'");
+        ///// <summary>
+        ///// Delete the collection from the table
+        ///// </summary>
+        ///// <param name="collection"></param>
+        //public void DeleteFromCollectionTable(Collection collection)
+        //{
+        //    using BlockfrostADO context = new();
+        //    var dbContextTransaction = context.Database.BeginTransaction();
+        //    try
+        //    {
+        //        // Collection
+        //        context.Database.ExecuteSqlCommand($"DELETE FROM [dbo].[Collections] WHERE [PolicyId] = '{collection.PolicyId}'");
+                
+        //        context.SaveChanges();
+        //        dbContextTransaction.Commit();
 
-                context.SaveChanges();
-                dbContextTransaction.Commit();
-
-                _ducky.Info($"Removed from Collection Table: {collection.Name}");
-            }
-            catch (Exception ex)
-            {
-                _ducky.Critical("BlockfrostController", "Reset", ex.Message);
-                dbContextTransaction.Rollback();
-                throw;
-            }
-        }
+        //        _ducky.Info($"Removed from Collection Table: {collection.Name}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _ducky.Critical("BlockfrostController", "Reset", ex.Message);
+        //        dbContextTransaction.Rollback();
+        //        throw;
+        //    }
+        //}
 
         /// <summary>
         /// Return the given collection as a dictionary of OnChainMetaData.
@@ -148,18 +161,18 @@ namespace Blockfrost.Controller
                 switch (collection)
                 {
                     //##_:
+					//##_:DeadRabbits+
+					case "DeadRabbits" :
+						var foundDeadRabbits = context.DeadRabbits.ToList();
+						foreach (var item in foundDeadRabbits) items.Add(item.asset, item);
+						break;
+					//##_:DeadRabbits-
 					//##_:FalseIdols+
 					case "FalseIdols" :
 						var foundFalseIdols = context.FalseIdols.ToList();
 						foreach (var item in foundFalseIdols) items.Add(item.asset, item);
 						break;
 					//##_:FalseIdols-
-					
-					
-					
-					
-					
-					
 					//##_:PuurrtyCatsSociety+
 					case "PuurrtyCatsSociety" :
 						var foundPuurrtyCatsSociety = context.PuurrtyCatsSociety.ToList();
@@ -184,37 +197,5 @@ namespace Blockfrost.Controller
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

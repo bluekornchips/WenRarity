@@ -19,13 +19,13 @@ var collection = new Collection()
 //    RealName = "DeluxeBot OG Collection"
 //};
 
-collection = new Collection()
-{
-    PolicyId = "f96584c4fcd13cd1702c9be683400072dd1aac853431c99037a3ab1e",
-    Name = "PuurrtyCatsSociety",
-    DatabaseName = "PuurrtyCatsSociety",
-    RealName = "Puurrty Cats Society"
-};
+//collection = new Collection()
+//{
+//    PolicyId = "f96584c4fcd13cd1702c9be683400072dd1aac853431c99037a3ab1e",
+//    Name = "PuurrtyCatsSociety",
+//    DatabaseName = "PuurrtyCatsSociety",
+//    RealName = "Puurrty Cats Society"
+//};
 
 
 //var collection = new Collection()
@@ -36,14 +36,13 @@ collection = new Collection()
 //    RealName = "Invisible Buddies"
 //};
 
-
-//collection = new Collection()
-//{
-//    PolicyId = "de2340edc45629456bf695200e8ea32f948a653b21ada10bc6f0c554",
-//    Name = "DeadRabbits",
-//    DatabaseName = "DeadRabbits",
-//    RealName = "Dead Rabbit Resurrection Society"
-//};
+collection = new Collection()
+{
+    PolicyId = "de2340edc45629456bf695200e8ea32f948a653b21ada10bc6f0c554",
+    Name = "DeadRabbits",
+    DatabaseName = "DeadRabbits",
+    RealName = "Dead Rabbit Resurrection Society"
+};
 
 collection = new Collection()
 {
@@ -52,7 +51,6 @@ collection = new Collection()
     DatabaseName = "FalseIdols",
     RealName = "False Idols"
 };
-
 
 
 

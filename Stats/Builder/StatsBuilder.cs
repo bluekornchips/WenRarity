@@ -14,22 +14,26 @@ namespace Stats.Builders
 
         private static Ducky _ducky = Ducky.Instance;
         private static BlockfrostController _bfController = BlockfrostController.Instance;
-        private static RimeController _rimeController = RimeController.Instance;
-        private static RimeFrameworkBuilder _rimefb = RimeFrameworkBuilder.Instance;
-        private static StatsFrameworkBuilder _statsfb = StatsFrameworkBuilder.Instance;
-        private static StatsHandler _statsb = StatsHandler.Instance;
+        private static RimeFrameworkBuilder _rimeFB = RimeFrameworkBuilder.Instance;
+        private static StatsFrameworkBuilder _statsFB = StatsFrameworkBuilder.Instance;
+        private static StatsHandler _statsHandler = StatsHandler.Instance;
 
         private static StatsContainer _stats = new StatsContainer();
 
+        /// <summary>
+        /// Main Build operation.
+        /// </summary>
+        /// <param name="name"></param>
         public void Build(string name)
         {
+
             _bfController.CollectionByName(name, out Collection collection);
+
             if (collection == null)
             {
                 _ducky.Error("StatsBuilder", "Build", $"No collection found for {name}.");
                 return;
             }
-
 
             _stats = new StatsContainer()
             {
@@ -39,15 +43,17 @@ namespace Stats.Builders
 
             AttributesForRarity();
 
-            //if (!_statsfb.CollectionExists(name))
-            //{
-            //    _rimefb.CreateToken(_stats);
-            //    _statsfb.Build(collection, _stats);
-            //    return;
-            //}
+            if (!_statsFB.CollectionExists(name))
+            {
+                _rimeFB.CreateToken(_stats);
+                _statsFB.Build(collection, _stats);
+                _ducky.Info("\n\nPlease add the Token to the AttributesForRarity() method.\n\n");
+                return;
+            }
 
-            //_rimefb.CreateToken(_stats);
-            _statsfb.Build(collection, _stats);
+            //// Uncomment to force an update.
+            //_rimeFB.CreateToken(_stats);
+            //_statsFB.Build(collection, _stats);
 
             PopulateAttributeTables();
         }
@@ -59,32 +65,47 @@ namespace Stats.Builders
                 //##_:populate+
 				//##_:FalseIdols+
 				case "FalseIdols":
-					_statsb.statsHandler = new FalseIdolsStatsHandler();
-					_statsb.statsHandler.Handle();
-					_statsb.statsHandler.GenerateCollectionRarity_SQL();
+					_statsHandler.handler = new FalseIdolsStatsHandler();
+					_statsHandler.handler.Handle();
+					_statsHandler.handler.GenerateCollectionRarity_SQL();
 					break;
 				//##_:FalseIdols-
 				
-				//##_:PuurrtyCatsSociety+
-				case "PuurrtyCatsSociety":
-					_statsb.statsHandler = new PuurrtyCatsSocietyStatsHandler();
-					_statsb.statsHandler.Handle();
-					_statsb.statsHandler.GenerateCollectionRarity_SQL();
-					break;
-				//##_:PuurrtyCatsSociety-
-				//##_:KBot+
-				case "KBot":
-					_statsb.statsHandler = new KBotStatsHandler();
-					_statsb.statsHandler.Handle();
-					_statsb.statsHandler.GenerateCollectionRarity_SQL();
-					break;
-				//##_:KBot-
 				
+				
+				
+				
+				
+                //##_:DeadRabbits+
+                //case "DeadRabbits":
+                //    _statsHandler.statsHandler = new DeadRabbitsStatsHandler();
+                //    _statsHandler.statsHandler.Handle();
+                //    _statsHandler.statsHandler.GenerateCollectionRarity_SQL();
+                //    break;
+                //##_:DeadRabbits-
+                
+                //##_:PuurrtyCatsSociety+
+                case "PuurrtyCatsSociety":
+                    _statsHandler.handler = new PuurrtyCatsSocietyStatsHandler();
+                    _statsHandler.handler.Handle();
+                    _statsHandler.handler.GenerateCollectionRarity_SQL();
+                    break;
+                //##_:PuurrtyCatsSociety-
+                //##_:KBot+
+                case "KBot":
+                    _statsHandler.handler = new KBotStatsHandler();
+                    _statsHandler.handler.Handle();
+                    _statsHandler.handler.GenerateCollectionRarity_SQL();
+                    break;
+                //##_:KBot-
                 default:
                     break;
             }
         }
 
+        /// <summary>
+        /// Easy method to handle which traits we want included in the rarity generation
+        /// </summary>
         public void AttributesForRarity()
         {
             switch (_stats.collection.Name)
@@ -124,94 +145,30 @@ namespace Stats.Builders
                     };
                     _stats.includeTraitCount = true;
                     break;
+                case "DeadRabbits":
+                    _stats.traitsIncluded = new()
+                    {
+                        "Jaw",
+                        "Pin",
+                        "Ears",
+                        "Eyes",
+                        "Order",
+                        "Teeth",
+                        "Eyewear",
+                        "Clothing",
+                        "EarTags",
+                        "Headwear",
+                        "Background",
+                        "MouthBling"
+                    };
+                    _stats.includeTraitCount = true;
+                    break;
                 default:
                     break;
             }
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

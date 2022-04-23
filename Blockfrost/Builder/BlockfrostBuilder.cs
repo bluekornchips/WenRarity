@@ -9,7 +9,10 @@ using WenRarityLibrary;
 
 namespace Blockfrost.Builder
 {
-
+    /// <summary>
+    /// Blockfrost Project
+    /// Calls Blockfrost API, stores JSON, builds Asset and OnChainMetaData tokens.
+    /// </summary>
     public class BlockfrostBuilder
     {
         private static BlockfrostBuilder instance;
@@ -33,24 +36,6 @@ namespace Blockfrost.Builder
             _collection = collection;
             _type = _collection.Name;
 
-            //bool hardReset = false;
-            //if (hardReset)
-            //{
-            //    FrameworkBuilder fb = new();
-            //    _blockfrostController.Delete(_collection, true);
-            //    fb.RemoveAllCollectionInfoFromFiles(_collection);
-            //    return;
-            //}
-
-
-
-            //bool softReset = true;
-
-            //if (softReset)
-            //{
-            //    _blockfrostController.Delete(_collection, false);
-            //}
-
             if (!_blockfrostController.CollectionExists(_collection.PolicyId))
             {
                 bool overwrite = false;
@@ -61,12 +46,28 @@ namespace Blockfrost.Builder
                 };
             }
 
-            _blockfrostController.DeleteTokenTable(collection);
+            if (_blockfrostController.CollectionExists(_collection.PolicyId))
+            {
+                _blockfrostController.DeleteTokenTable(collection);
+            }
 
             ExistingRecords();
             RetrieveJson();
         }
 
+
+        /// <summary>
+        /// Create a new Collection
+        /// - Updates Collection Table
+        /// - Creates the NFT Asset class.
+        /// 
+        /// Always needs to have the Database updated after running
+        ///     update-databaase
+        /// </summary>
+        /// 
+        /// <param name="overwrite"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         private bool NewCollection(bool overwrite = false)
         {
             // Get a sample of the data from the first page.
@@ -102,11 +103,14 @@ namespace Blockfrost.Builder
         /// Get existing records, if any.
         /// </summary>
         public void ExistingRecords()
-        {
-            _blockfrostController.GetOnChainMetaDataAsModel(_collection.Name, out _assets);
-        }
+            => _blockfrostController.GetOnChainMetaDataAsModel(_collection.Name, out _assets);
 
-        // If there is existing json, return the item and true.
+        /// <summary>
+        /// Checks if we have a local copy of the json and returns it and a true value.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <param name="json"></param>
+        /// <returns></returns>
         public bool ExistingJson(string asset, out string json)
         {
             json = "";
@@ -122,19 +126,22 @@ namespace Blockfrost.Builder
         public void RetrieveJson()
         {
             bool retrieved = false;
-
             int page = 0;
             int matchCount = 0;
+
             _ducky.Info($"Building collection for {_collection.Name}.");
+
             do
             {
                 _blockfrostAPI.Assets_ByPolicy(_collection.PolicyId, ++page, out string policyJson);
 
                 if (policyJson == "[]")
                 {
+                    _ducky.Info("End of collection data from Blockfrost API.");
                     retrieved = true;
                     return;
                 }
+
                 _jsonBuilder.AsBlockfrostPolicyItems(policyJson, out List<BlockfrostPolicyItem> policyItems);
 
                 // Trim 0 Quantities - Usually the first item in the list.
@@ -147,10 +154,11 @@ namespace Blockfrost.Builder
                     {
                         // Check if we already have a copy of the JSON data
                         bool addedFromDb = true;
+
                         if (!ExistingJson(policyItem.Asset, out string assetJson))
                         {
-                            _blockfrostAPI.Asset(policyItem.Asset, out assetJson);
                             addedFromDb = false;
+                            _blockfrostAPI.Asset(policyItem.Asset, out assetJson);
                             _blockfrostController.JsonAdd(new BlockfrostItemJson()
                             {
                                 policy_id = _collection.PolicyId,
@@ -162,16 +170,22 @@ namespace Blockfrost.Builder
                         
                         _jsonBuilder.AsCIPStandardModel(assetJson, _type, out OnChainMetaDataViewModel vm);
                         
+                        // Update model attributes with related VM info.
                         vm.model.asset = policyItem.Asset;
                         vm.model.policy_id = _collection.PolicyId;
                         vm.model.fingerprint = vm.fingerprint;
 
+                        // Add to the database with the appropriate class information and table data.
                         _onChainMetaDataModelHandler.Add(vm.AsModel(_type));
+
+                        // Add to the in memory dictionary.
                         _assets.Add(policyItem.Asset,vm.model);
 
+                        // If the item is not found locally, we have a new item.
                         if(!addedFromDb) _ducky.Info($"Added {vm.model.name}.");
                     }
 
+                    // All items are accounted for, safe to exit.
                     if (matchCount == policyItems.Count())
                     {
                         retrieved = true;

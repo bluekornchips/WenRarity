@@ -3,13 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WenRarityLibrary.ADO.Rime.Models.Rarity.Token
 {
-	[Table("FalseIdolsCharacterRarity")]
-	public partial class FalseIdolsCharacterRarity
+	[Table("FalseIdolsFace")]
+	public partial class FalseIdolsFace
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		 public int id{ get; set; }
-		public string Character { get; set; }
+		public int id{ get; set; }
+		public string Face { get; set; }
 		public int Count { get; set; }
 	}
 }

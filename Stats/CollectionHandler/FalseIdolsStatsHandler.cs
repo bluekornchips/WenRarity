@@ -11,7 +11,6 @@ namespace Stats.Builders
 {
 	public class FalseIdolsStatsHandler : BaseStatsHandler
 	{
-		private static RimeController _rimeController = RimeController.Instance;
 
 		public override void Handle()
 		{
@@ -25,8 +24,8 @@ namespace Stats.Builders
 
 				// Back
 				var back = tokens.GroupBy(t => t.Back);
-				var backItems = new List<FalseIdolsBackRarity>();
-				foreach (var item in back) backItems.Add(new FalseIdolsBackRarity()
+				var backItems = new List<FalseIdolsBack>();
+				foreach (var item in back) backItems.Add(new FalseIdolsBack()
 				{
 					 Back = item.Key,
 					 Count = item.Count()
@@ -34,8 +33,8 @@ namespace Stats.Builders
 
 				// Face
 				var face = tokens.GroupBy(t => t.Face);
-				var faceItems = new List<FalseIdolsFaceRarity>();
-				foreach (var item in face) faceItems.Add(new FalseIdolsFaceRarity()
+				var faceItems = new List<FalseIdolsFace>();
+				foreach (var item in face) faceItems.Add(new FalseIdolsFace()
 				{
 					 Face = item.Key,
 					 Count = item.Count()
@@ -43,8 +42,8 @@ namespace Stats.Builders
 
 				// Head
 				var head = tokens.GroupBy(t => t.Head);
-				var headItems = new List<FalseIdolsHeadRarity>();
-				foreach (var item in head) headItems.Add(new FalseIdolsHeadRarity()
+				var headItems = new List<FalseIdolsHead>();
+				foreach (var item in head) headItems.Add(new FalseIdolsHead()
 				{
 					 Head = item.Key,
 					 Count = item.Count()
@@ -52,8 +51,8 @@ namespace Stats.Builders
 
 				// Outfit
 				var outfit = tokens.GroupBy(t => t.Outfit);
-				var outfitItems = new List<FalseIdolsOutfitRarity>();
-				foreach (var item in outfit) outfitItems.Add(new FalseIdolsOutfitRarity()
+				var outfitItems = new List<FalseIdolsOutfit>();
+				foreach (var item in outfit) outfitItems.Add(new FalseIdolsOutfit()
 				{
 					 Outfit = item.Key,
 					 Count = item.Count()
@@ -61,8 +60,8 @@ namespace Stats.Builders
 
 				// Character
 				var character = tokens.GroupBy(t => t.Character);
-				var characterItems = new List<FalseIdolsCharacterRarity>();
-				foreach (var item in character) characterItems.Add(new FalseIdolsCharacterRarity()
+				var characterItems = new List<FalseIdolsCharacter>();
+				foreach (var item in character) characterItems.Add(new FalseIdolsCharacter()
 				{
 					 Character = item.Key,
 					 Count = item.Count()
@@ -70,8 +69,8 @@ namespace Stats.Builders
 
 				// Background
 				var background = tokens.GroupBy(t => t.Background);
-				var backgroundItems = new List<FalseIdolsBackgroundRarity>();
-				foreach (var item in background) backgroundItems.Add(new FalseIdolsBackgroundRarity()
+				var backgroundItems = new List<FalseIdolsBackground>();
+				foreach (var item in background) backgroundItems.Add(new FalseIdolsBackground()
 				{
 					 Background = item.Key,
 					 Count = item.Count()
@@ -79,8 +78,8 @@ namespace Stats.Builders
 
 				// traitCount
 				var traitCount = tokens.GroupBy(t => t.traitCount);
-				var traitCountItems = new List<FalseIdolsTraitCountRarity>();
-				foreach (var item in traitCount) traitCountItems.Add(new FalseIdolsTraitCountRarity()
+				var traitCountItems = new List<FalseIdolsTraitCount>();
+				foreach (var item in traitCount) traitCountItems.Add(new FalseIdolsTraitCount()
 				{
 					 traitCount = item.Key,
 					 Count = item.Count()
@@ -90,27 +89,27 @@ namespace Stats.Builders
 				var trans = context.Database.BeginTransaction();
 				try
 				{
-					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsBackRarity]");
-					context.FalseIdolsBackRarity.AddRange(backItems);
-					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsFaceRarity]");
-					context.FalseIdolsFaceRarity.AddRange(faceItems);
-					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsHeadRarity]");
-					context.FalseIdolsHeadRarity.AddRange(headItems);
-					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsOutfitRarity]");
-					context.FalseIdolsOutfitRarity.AddRange(outfitItems);
-					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsCharacterRarity]");
-					context.FalseIdolsCharacterRarity.AddRange(characterItems);
-					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsBackgroundRarity]");
-					context.FalseIdolsBackgroundRarity.AddRange(backgroundItems);
-					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsTraitCountRarity]");
-					context.FalseIdolsTraitCountRarity.AddRange(traitCountItems);
+					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsBack]");
+					context.FalseIdolsBack.AddRange(backItems);
+					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsFace]");
+					context.FalseIdolsFace.AddRange(faceItems);
+					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsHead]");
+					context.FalseIdolsHead.AddRange(headItems);
+					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsOutfit]");
+					context.FalseIdolsOutfit.AddRange(outfitItems);
+					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsCharacter]");
+					context.FalseIdolsCharacter.AddRange(characterItems);
+					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsBackground]");
+					context.FalseIdolsBackground.AddRange(backgroundItems);
+					context.Database.ExecuteSqlCommand($"DELETE FROM[dbo].[FalseIdolsTraitCount]");
+					context.FalseIdolsTraitCount.AddRange(traitCountItems);
 					context.SaveChanges();
 					trans.Commit();
-					_ducky.Info($"Updated FalseIdolsRarity.");
+					_ducky.Info($"Cleared FalseIdolsRarity.");
 				}
 				catch (Exception ex)
 				{
-					_ducky.Error("FalseIdolsStatsHandler", "FalseIdolsRarity_Pet", ex.Message);
+					_ducky.Error("FalseIdolsStatsHandler", "FalseIdols_Pet", ex.Message);
 					throw;
 				}
 			}
@@ -125,13 +124,13 @@ namespace Stats.Builders
 			{
 				var blockfrostItems = bfContext.FalseIdols.ToList();
 				var size = blockfrostItems.Count;
-				var traitCountRarity = rimeContext.FalseIdolsTraitCountRarity.ToList();
-				var backRarity = rimeContext.FalseIdolsBackRarity.ToList();
-				var faceRarity = rimeContext.FalseIdolsFaceRarity.ToList();
-				var headRarity = rimeContext.FalseIdolsHeadRarity.ToList();
-				var outfitRarity = rimeContext.FalseIdolsOutfitRarity.ToList();
-				var characterRarity = rimeContext.FalseIdolsCharacterRarity.ToList();
-				var backgroundRarity = rimeContext.FalseIdolsBackgroundRarity.ToList();
+				var traitCountRarity = rimeContext.FalseIdolsTraitCount.ToList();
+				var back = rimeContext.FalseIdolsBack.ToList();
+				var face = rimeContext.FalseIdolsFace.ToList();
+				var head = rimeContext.FalseIdolsHead.ToList();
+				var outfit = rimeContext.FalseIdolsOutfit.ToList();
+				var character = rimeContext.FalseIdolsCharacter.ToList();
+				var background = rimeContext.FalseIdolsBackground.ToList();
 
 				var rimeItems = new List<FalseIdolsRarity>();
 
@@ -145,26 +144,26 @@ namespace Stats.Builders
 					};
 
 					rarity.weighting = 0;
+
 					rarity.traitCount = MH(traitCountRarity.Where(i => i.traitCount == item.traitCount).FirstOrDefault().Count, size);
-
 					rarity.weighting += rarity.traitCount;
-					rarity.Back = MH(backRarity.Where(i => i.Back == item.Back).FirstOrDefault().Count, size);
 
+					rarity.Back = MH(back.Where(i => i.Back == item.Back).FirstOrDefault().Count, size);
 					rarity.weighting += rarity.Back;
-					rarity.Face = MH(faceRarity.Where(i => i.Face == item.Face).FirstOrDefault().Count, size);
 
+					rarity.Face = MH(face.Where(i => i.Face == item.Face).FirstOrDefault().Count, size);
 					rarity.weighting += rarity.Face;
-					rarity.Head = MH(headRarity.Where(i => i.Head == item.Head).FirstOrDefault().Count, size);
 
+					rarity.Head = MH(head.Where(i => i.Head == item.Head).FirstOrDefault().Count, size);
 					rarity.weighting += rarity.Head;
-					rarity.Outfit = MH(outfitRarity.Where(i => i.Outfit == item.Outfit).FirstOrDefault().Count, size);
 
+					rarity.Outfit = MH(outfit.Where(i => i.Outfit == item.Outfit).FirstOrDefault().Count, size);
 					rarity.weighting += rarity.Outfit;
-					rarity.Character = MH(characterRarity.Where(i => i.Character == item.Character).FirstOrDefault().Count, size);
 
+					rarity.Character = MH(character.Where(i => i.Character == item.Character).FirstOrDefault().Count, size);
 					rarity.weighting += rarity.Character;
-					rarity.Background = MH(backgroundRarity.Where(i => i.Background == item.Background).FirstOrDefault().Count, size);
 
+					rarity.Background = MH(background.Where(i => i.Background == item.Background).FirstOrDefault().Count, size);
 					rarity.weighting += rarity.Background;
 
 					rimeItems.Add(rarity);

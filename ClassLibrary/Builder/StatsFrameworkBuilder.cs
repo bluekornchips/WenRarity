@@ -14,15 +14,23 @@ namespace WenRarityLibrary.Builders
             DirectorySafetyChecks();
         }
 
-        public bool Build(Collection collection, StatsContainer stats)
+        /// <summary>
+        /// Build the Stats Framework.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="stats"></param>
+        public void Build(Collection collection, StatsContainer stats)
         {
             RemoveExistingFiles(collection);
-
             Update_StatsBuilder_PopulateAttributeTables(collection);
             StatsHandlerBlueprint(collection, stats);
-            return false;
         }
 
+        /// <summary>
+        /// Blueprint for [CLASS]StatsHandler.cs
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="stats"></param>
         private void StatsHandlerBlueprint(Collection collection, StatsContainer stats)
         {
             StringBuilder sb = new();
@@ -44,10 +52,9 @@ namespace WenRarityLibrary.Builders
             sb.Append($"{OH(1, tabs)}" + "{");
             sb.Append($"{OH(1, ++tabs)}public class {collection.Name}StatsHandler : BaseStatsHandler");
             sb.Append($"{OH(1, tabs)}" + "{");
-            sb.Append($"{OH(1, ++tabs)}private static RimeController _rimeController = RimeController.Instance;");
 
             // Handle
-            sb.Append($"{OH(2, tabs)}public override void Handle()");
+            sb.Append($"{OH(2, ++tabs)}public override void Handle()");
             sb.Append($"{OH(1, tabs)}" + "{");
             sb.Append($"{OH(1, ++tabs)}using BlockfrostADO bfContext = new();");
             sb.Append($"{OH(1, tabs)}var tokens = bfContext.{collection.Name}.ToList();");
@@ -57,7 +64,7 @@ namespace WenRarityLibrary.Builders
 
             foreach (var item in stats.traitsIncluded)
             {
-                var itemName = $"{collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1)}Rarity";
+                var itemName = $"{collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1)}";
 
                 sb.Append($"{OH(2, tabs)}// {item}");
                 sb.Append($"{OH(1, tabs)}var {item.ToLower()} = tokens.GroupBy(t => t.{item});");
@@ -72,7 +79,7 @@ namespace WenRarityLibrary.Builders
             // Trait Count
             if (stats.includeTraitCount)
             {
-                var itemName = $"{collection.Name}TraitCountRarity";
+                var itemName = $"{collection.Name}TraitCount";
 
                 sb.Append($"{OH(2, tabs)}// traitCount");
                 sb.Append($"{OH(1, tabs)}var traitCount = tokens.GroupBy(t => t.traitCount);");
@@ -87,13 +94,12 @@ namespace WenRarityLibrary.Builders
             // Database Updates
             sb.Append($"{OH(2, tabs)}using RimeADO context = new();");
             sb.Append($"{OH(1, tabs)}var trans = context.Database.BeginTransaction();");
-
             sb.Append($"{OH(1, tabs)}try");
             sb.Append($"{OH(1, tabs++)}" + "{");
 
             foreach (var item in stats.traitsIncluded)
             {
-                var itemName = $"{collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1)}Rarity";
+                var itemName = $"{collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1)}";
                 sb.Append($"{OH(1, tabs)}context.Database.ExecuteSqlCommand($\"DELETE FROM[dbo].[{itemName}]\");");
                 sb.Append($"{OH(1, tabs)}context.{itemName}.AddRange({item.ToLower()}Items);");
             }
@@ -101,7 +107,7 @@ namespace WenRarityLibrary.Builders
             // Trait Count
             if (stats.includeTraitCount)
             {
-                var itemName = $"{collection.Name}TraitCountRarity";
+                var itemName = $"{collection.Name}TraitCount";
                 sb.Append($"{OH(1, tabs)}context.Database.ExecuteSqlCommand($\"DELETE FROM[dbo].[{itemName}]\");");
                 sb.Append($"{OH(1, tabs)}context.{itemName}.AddRange(traitCountItems);");
             }
@@ -109,16 +115,13 @@ namespace WenRarityLibrary.Builders
 
             sb.Append($"{OH(1, tabs)}context.SaveChanges();");
             sb.Append($"{OH(1, tabs)}trans.Commit();");
-            sb.Append($"{OH(1, tabs)}_ducky.Info($\"Updated {collection.Name}Rarity.\");");
+            sb.Append($"{OH(1, tabs)}_ducky.Info($\"Cleared {collection.Name}Rarity.\");");
             sb.Append($"{OH(1, --tabs)}" + "}");
-
             sb.Append($"{OH(1, tabs)}catch (Exception ex)");
             sb.Append($"{OH(1, tabs)}" + "{");
-            sb.Append($"{OH(1, ++tabs)}_ducky.Error(\"{collection.Name}StatsHandler\", \"{collection.Name}Rarity_Pet\", ex.Message);");
+            sb.Append($"{OH(1, ++tabs)}_ducky.Error(\"{collection.Name}StatsHandler\", \"{collection.Name}_Pet\", ex.Message);");
             sb.Append($"{OH(1, tabs)}throw;");
             sb.Append($"{OH(1, --tabs)}" + "}");
-
-
             sb.Append($"{OH(1, --tabs)}" + "}");
             sb.Append($"{OH(1, --tabs)}" + "}");
 
@@ -136,12 +139,13 @@ namespace WenRarityLibrary.Builders
             // Trait Count
             if (stats.includeTraitCount)
             {
-                sb.Append($"{OH(1, tabs)}var traitCountRarity = rimeContext.{collection.Name}TraitCountRarity.ToList();");
+                sb.Append($"{OH(1, tabs)}var traitCountRarity = rimeContext.{collection.Name}TraitCount.ToList();");
             }
 
+            /// Included traits
             foreach (var item in stats.traitsIncluded)
             {
-                sb.Append($"{OH(1, tabs)}var {item.ToLower()}Rarity = rimeContext.{collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1)}Rarity.ToList();");
+                sb.Append($"{OH(1, tabs)}var {item.ToLower()} = rimeContext.{collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1)}.ToList();");
             }
 
             sb.Append($"{OH(2, tabs)}var rimeItems = new List<{collection.Name}Rarity>();");
@@ -158,19 +162,19 @@ namespace WenRarityLibrary.Builders
             // Trait Count
             if (stats.includeTraitCount)
             {
-                sb.Append($"{OH(1, tabs)}rarity.traitCount = MH(traitCountRarity.Where(i => i.traitCount == item.traitCount).FirstOrDefault().Count, size);");
-                sb.Append($"{OH(2, tabs)}rarity.weighting += rarity.traitCount;");
+                sb.Append($"{OH(2, tabs)}rarity.traitCount = MH(traitCountRarity.Where(i => i.traitCount == item.traitCount).FirstOrDefault().Count, size);");
+                sb.Append($"{OH(1, tabs)}rarity.weighting += rarity.traitCount;");
             }
 
+            // Included Traits
             foreach (var item in stats.traitsIncluded)
             {
-                sb.Append($"{OH(1, tabs)}rarity.{item} = MH({item.ToLower()}Rarity.Where(i => i.{item} == item.{item}).FirstOrDefault().Count, size);");
-                sb.Append($"{OH(2, tabs)}rarity.weighting += rarity.{item};");
+                sb.Append($"{OH(2, tabs)}rarity.{item} = MH({item.ToLower()}.Where(i => i.{item} == item.{item}).FirstOrDefault().Count, size);");
+                sb.Append($"{OH(1, tabs)}rarity.weighting += rarity.{item};");
             }
 
             sb.Append($"{OH(2, tabs)}rimeItems.Add(rarity);");
             sb.Append($"{OH(1, --tabs)}" + "}");
-
             sb.Append($"{OH(1, tabs)}rimeContext.Database.ExecuteSqlCommand($\"DELETE FROM {collection.Name}Rarity; \");");
             sb.Append($"{OH(1, tabs)}rimeContext.Database.ExecuteSqlCommand($\"DBCC CHECKIDENT('{collection.Name}Rarity', RESEED, 0); \");");
             sb.Append($"{OH(2, tabs)}rimeContext.{collection.Name}Rarity.AddRange(rimeItems);");
@@ -178,7 +182,6 @@ namespace WenRarityLibrary.Builders
             sb.Append($"{OH(1, tabs)}rimeContext.SaveChanges();");
             sb.Append($"{OH(2, tabs)}_ducky.Info($\"Created rarity table for {collection.Name}.\");") ;
             sb.Append($"{OH(1, --tabs)}" + "}");
-
             sb.Append($"{OH(1, tabs)}catch (Exception ex)");
             sb.Append($"{OH(1, tabs)}" + "{");
             sb.Append($"{OH(1, ++tabs)}trans.Rollback();");
@@ -192,6 +195,10 @@ namespace WenRarityLibrary.Builders
             _fileIO.Write(sb.ToString(), fileLoc);
         }
 
+        /// <summary>
+        /// StatsBuilder method for populating the attribute tables.
+        /// </summary>
+        /// <param name="collection"></param>
         private void Update_StatsBuilder_PopulateAttributeTables(Collection collection)
         {
             {
@@ -208,14 +215,13 @@ namespace WenRarityLibrary.Builders
 
                 StringBuilder newTextsb = new();
                 int tabs = 4;
+
                 newTextsb.Append($"{OH(1, tabs)}{_marker}{collection.Name}+");// START MARKER
-
                 newTextsb.Append($"{OH(1, tabs++)}case \"{collection.Name}\":");
-                newTextsb.Append($"{OH(1, tabs)}_statsb.statsHandler = new {collection.Name}StatsHandler();");
-                newTextsb.Append($"{OH(1, tabs)}_statsb.statsHandler.Handle();");
-                newTextsb.Append($"{OH(1, tabs)}_statsb.statsHandler.GenerateCollectionRarity_SQL();");
+                newTextsb.Append($"{OH(1, tabs)}_statsHandler.handler = new {collection.Name}StatsHandler();");
+                newTextsb.Append($"{OH(1, tabs)}_statsHandler.handler.Handle();");
+                newTextsb.Append($"{OH(1, tabs)}_statsHandler.handler.GenerateCollectionRarity_SQL();");
                 newTextsb.Append($"{OH(1, tabs--)}break;");
-
                 newTextsb.Append($"{OH(1, tabs)}{_marker}{collection.Name}-");// END MARKER
 
                 string newText = newTextsb.ToString();
@@ -229,13 +235,11 @@ namespace WenRarityLibrary.Builders
             }
         }
 
-        public bool CollectionExists(string path)
-        {
-            string fullPath = libraryDir + $"\\ADO\\Rime\\Models\\Rarity\\Token\\{path}";
-            if (Directory.Exists(fullPath)) return true;
-            return false;
-        }
 
+        /// <summary>
+        /// Remove existing code blocks in the Stats Project as indicated by the collection markers.
+        /// </summary>
+        /// <param name="collection"></param>
         protected void RemoveExistingFiles(Collection collection)
         {
             _ducky.Info($"Removing file information for {collection.Name} in the Stats Project...");
@@ -275,5 +279,22 @@ namespace WenRarityLibrary.Builders
             }
             _ducky.Info($"File audit success for {collection.Name} Stats Project files.");
         }
+
+
+        #region Helper
+
+        /// <summary>
+        /// If the Collecton folder exists, return true
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public bool CollectionExists(string path)
+        {
+            string fullPath = libraryDir + $"\\ADO\\Rime\\Models\\Rarity\\Token\\{path}";
+            if (Directory.Exists(fullPath)) return true;
+            return false;
+        }
+
+        #endregion Helper
     }
 }

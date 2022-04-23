@@ -16,6 +16,14 @@ namespace WenRarityLibrary.Builders
         private string tokenDir = "";
         private string thisAssetDir = "";
 
+        /// <summary>
+        /// Create the directory, if it does not exist.
+        /// Remove existing collection information, if it exists.
+        /// Add the Rarity Token
+        /// Add the Rarity Token attributes classes for the database.
+        /// Update the ADO.
+        /// </summary>
+        /// <param name="statsContainer"></param>
         public void CreateToken(StatsContainer statsContainer)
         {
             tokenDir = libraryDir + $"\\ADO\\Rime\\Models\\Rarity\\Token\\";
@@ -29,38 +37,10 @@ namespace WenRarityLibrary.Builders
             Update_RimeADO(statsContainer);
         }
 
-        protected void Remove_Rarity(Collection collection)
-        {
-            _ducky.Info($"Removing file information for {collection.Name} rarity in the Libary Project...");
-            List<string> projectFiles = new(Directory.GetFiles(libraryDir + "\\ADO\\Rime", "*.cs", SearchOption.AllDirectories));
-
-            foreach (var projectFile in projectFiles)
-            {
-                _fileIO.Read(projectFile, out string readText);
-                string markerStr = $"{ _marker }{ collection.Name }";
-
-                if (readText.Contains(markerStr))
-                {
-                    StringBuilder sb = new();
-                    try
-                    {
-                        int indexOfPlus = readText.IndexOf($"{markerStr}+");
-                        int indexOfMinus = readText.IndexOf($"{markerStr}-");
-
-                        sb.Append(readText.AsSpan(0, indexOfPlus));
-
-                        sb.Append(readText.AsSpan(indexOfMinus + markerStr.Length + 1));
-                        _fileIO.Write(sb.ToString(), projectFile);
-                    }
-                    catch (Exception ex)
-                    {
-                        _ducky.Error("RimeFrameworkBuilder", "Remove_Rarity", ex.Message);
-                    }
-                }
-            }
-            _ducky.Info($"File audit success for {collection.Name} rarity Libary Project files.");
-        }
-
+        /// <summary>
+        /// Update RimeADO in the Library Class
+        /// </summary>
+        /// <param name="statsContainer"></param>
         private void Update_RimeADO(StatsContainer statsContainer)
         {
             StringBuilder sb = new();
@@ -71,21 +51,20 @@ namespace WenRarityLibrary.Builders
             _fileIO.Read(fileLoc, out string readText);
 
             int startLoc = readText.IndexOf(startToken);
-            string fileStartToMarker = readText.Substring(0, startLoc);
-            string filerMarkerToEnd = readText.Substring(startLoc + startToken.Length);
+            string fileStartToMarker = readText.Substring(0, startLoc).TrimStart();
+            string filerMarkerToEnd = readText.Substring(startLoc + startToken.Length).TrimEnd();
 
             // Attributes
             StringBuilder attributeBuilder = new();
             int tabs = 2;
 
             attributeBuilder.Append($"{OH(1, tabs)}{_marker}{statsContainer.collection.Name}+");// START MARKER
-
             attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}Rarity> {statsContainer.collection.Name}Rarity " + "{ get; set; }");
-            attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}TraitCountRarity> {statsContainer.collection.Name}TraitCountRarity" + "{ get; set; }");
+            attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}TraitCount> {statsContainer.collection.Name}TraitCount" + "{ get; set; }");
 
             foreach (var item in statsContainer.traitsIncluded)
             {
-                attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1) }Rarity> {statsContainer.collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1) }Rarity " +
+                attributeBuilder.Append($"{OH(1, tabs)}public virtual DbSet<{statsContainer.collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1) }> {statsContainer.collection.Name}{item.Substring(0, 1).ToUpper() + item.Substring(1) } " +
                 "{ get; set; }");
             }
 
@@ -101,6 +80,10 @@ namespace WenRarityLibrary.Builders
             _fileIO.Write(sb.ToString(), fileLoc);
         }
 
+        /// <summary>
+        /// Add the Rarity Token to the local asset directory.
+        /// </summary>
+        /// <param name="statsContainer"></param>
         private void AddRarityToken(StatsContainer statsContainer)
         {
             StringBuilder sb = new();
@@ -132,11 +115,17 @@ namespace WenRarityLibrary.Builders
             _fileIO.Write(sb.ToString(), fileLoc);
         }
 
+        /// <summary>
+        /// Add the related Attribute Class and Table containers.
+        /// Includes Trait Count.
+        /// </summary>
+        /// <param name="statsContainer"></param>
         private void AddAttributeTokens(StatsContainer statsContainer)
         {
             StringBuilder sb = new();
             int tabs = 1;
             string attributeName = "";
+
             // Attributes
             foreach (var item in statsContainer.traitsIncluded)
             {
@@ -144,15 +133,15 @@ namespace WenRarityLibrary.Builders
                 sb.Clear();
                 attributeName = $"{ statsContainer.collection.Name }{ item.Substring(0,1).ToUpper() + item.Substring(1) }";
 
-                string fileLoc = thisAssetDir + $"{ attributeName }Rarity.cs";
+                string fileLoc = thisAssetDir + $"{ attributeName }.cs";
 
                 // Header
                 sb.Append("using System.ComponentModel.DataAnnotations;");
                 sb.Append($"{OH(1, tabs)}using System.ComponentModel.DataAnnotations.Schema;");
                 sb.Append($"{OH(2, 0)}namespace WenRarityLibrary.ADO.Rime.Models.Rarity.Token");
                 sb.Append($"{OH(1, 0)}" + "{");
-                sb.Append($"{OH(1, tabs)}[Table(\"{attributeName}Rarity\")]");
-                sb.Append($"{OH(1, tabs)}public partial class {attributeName}Rarity");
+                sb.Append($"{OH(1, tabs)}[Table(\"{attributeName}\")]");
+                sb.Append($"{OH(1, tabs)}public partial class {attributeName}");
                 sb.Append($"{OH(1, tabs++)}" + "{");
 
                 // Attribute - Count
@@ -173,15 +162,15 @@ namespace WenRarityLibrary.Builders
 
                 attributeName = $"{ statsContainer.collection.Name }TraitCount";
 
-                string fileLoc = thisAssetDir + $"{ attributeName }Rarity.cs";
+                string fileLoc = thisAssetDir + $"{ attributeName }.cs";
 
                 // Header
                 sb.Append("using System.ComponentModel.DataAnnotations;");
                 sb.Append($"{OH(1, tabs)}using System.ComponentModel.DataAnnotations.Schema;");
                 sb.Append($"{OH(2, 0)}namespace WenRarityLibrary.ADO.Rime.Models.Rarity.Token");
                 sb.Append($"{OH(1, 0)}" + "{");
-                sb.Append($"{OH(1, tabs)}[Table(\"{attributeName}Rarity\")]");
-                sb.Append($"{OH(1, tabs)}public partial class {attributeName}Rarity");
+                sb.Append($"{OH(1, tabs)}[Table(\"{attributeName}\")]");
+                sb.Append($"{OH(1, tabs)}public partial class {attributeName}");
                 sb.Append($"{OH(1, tabs++)}" + "{");
 
                 // Attribute - Count
@@ -195,6 +184,48 @@ namespace WenRarityLibrary.Builders
             }
         }
 
+
+        /// <summary>
+        /// Remove all code blocks in the Class Library with the given collection information.
+        /// </summary>
+        /// <param name="collection"></param>
+        protected void Remove_Rarity(Collection collection)
+        {
+            _ducky.Info($"Removing file information for {collection.Name} rarity in the Libary Project...");
+
+            List<string> projectFiles = new(Directory.GetFiles(libraryDir + "\\ADO\\Rime", "*.cs", SearchOption.AllDirectories));
+
+            foreach (var projectFile in projectFiles)
+            {
+                _fileIO.Read(projectFile, out string readText);
+                string markerStr = $"{ _marker }{ collection.Name }";
+
+                if (readText.Contains(markerStr))
+                {
+                    StringBuilder sb = new();
+                    try
+                    {
+                        int indexOfPlus = readText.IndexOf($"{markerStr}+");
+                        int indexOfMinus = readText.IndexOf($"{markerStr}-");
+
+                        sb.Append(readText.AsSpan(0, indexOfPlus));
+
+                        sb.Append(readText.AsSpan(indexOfMinus + markerStr.Length + 1));
+                        _fileIO.Write(sb.ToString(), projectFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        _ducky.Error("RimeFrameworkBuilder", "Remove_Rarity", ex.Message);
+                    }
+                }
+            }
+            _ducky.Info($"File audit success for {collection.Name} rarity Libary Project files.");
+        }
+
+        /// <summary>
+        /// Helper method for creating a directory if it does not exist.
+        /// </summary>
+        /// <param name="collection"></param>
         private void CreateDirectory(Collection collection)
         {
             thisAssetDir = tokenDir + $"{collection.Name}\\";
