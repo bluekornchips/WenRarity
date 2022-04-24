@@ -22,6 +22,10 @@ namespace WenRarityLibrary.ViewModels
         {
             switch (type)
             {//##_:
+				//##_:TavernSquad+
+				case "TavernSquad": return (TavernSquad)model;
+				//##_:TavernSquad-
+				
 				//##_:DeadRabbits+
 				case "DeadRabbits": return (DeadRabbits)model;
 				//##_:DeadRabbits-//##_:FalseIdols+
@@ -44,3 +48,6 @@ namespace WenRarityLibrary.ViewModels
         }
     }
 }
+
+
+

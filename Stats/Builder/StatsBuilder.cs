@@ -63,6 +63,23 @@ namespace Stats.Builders
             switch (_stats.collection.Name)
             {
                 //##_:populate+
+				//##_:TavernSquad+
+				case "TavernSquad":
+					_statsHandler.handler = new TavernSquadStatsHandler();
+					_statsHandler.handler.Handle();
+					_statsHandler.handler.GenerateCollectionRarity_SQL();
+					_statsHandler.handler.RarityChart();
+					break;
+				//##_:TavernSquad-
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				//##_:FalseIdols+
 				case "FalseIdols":
 					_statsHandler.handler = new FalseIdolsStatsHandler();
@@ -131,7 +148,6 @@ namespace Stats.Builders
                         "outfit",
                         "background"
                     };
-                    _stats.includeTraitCount = true;
                     break;
                 case "FalseIdols":
                     _stats.traitsIncluded = new List<string>()
@@ -143,7 +159,6 @@ namespace Stats.Builders
                         "Character",
                         "Background"
                     };
-                    _stats.includeTraitCount = true;
                     break;
                 case "DeadRabbits":
                     _stats.traitsIncluded = new()
@@ -161,7 +176,22 @@ namespace Stats.Builders
                         "Background",
                         "MouthBling"
                     };
-                    _stats.includeTraitCount = true;
+                    break;
+                case "TavernSquad":
+                    _stats.traitsIncluded = new()
+                    {
+                        "Back",
+                        "Eyes",
+                        "Face",
+                        "Head",
+                        "Race",
+                        "Armor",
+                        "Mouth",
+                        "Racial",
+                        "Familiar",
+                        "SkinTone",
+                        "Background",
+                    };
                     break;
                 default:
                     break;
@@ -169,6 +199,25 @@ namespace Stats.Builders
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

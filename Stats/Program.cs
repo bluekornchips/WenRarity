@@ -5,5 +5,6 @@ string name = "KBot";
 name = "PuurrtyCatsSociety";
 name = "DeadRabbits";
 name = "FalseIdols";
+name = "TavernSquad";
 
 sb.Build(name);

@@ -9,7 +9,11 @@ namespace WenRarityLibrary.ADO.Blockfrost
     {
         public BlockfrostADO() : base("Blockfrost") { }
         public virtual DbSet<BlockfrostItemJson> BlockfrostItemJson { get; set; }
-        public virtual DbSet<Collection> Collection { get; set; }//##_:tokens+//##_:DeadRabbits+
+        public virtual DbSet<Collection> Collection { get; set; }//##_:tokens+
+		//##_:TavernSquad+
+		public virtual DbSet<TavernSquad> TavernSquad { get; set; }
+		//##_:TavernSquad-
+		//##_:DeadRabbits+
 		public virtual DbSet<DeadRabbits> DeadRabbits { get; set; }
 		//##_:DeadRabbits-//##_:FalseIdols+
 		public virtual DbSet<FalseIdols> FalseIdols { get; set; }
@@ -39,3 +43,6 @@ namespace WenRarityLibrary.ADO.Blockfrost
         //##_:tokens-
     }
 }
+
+
+

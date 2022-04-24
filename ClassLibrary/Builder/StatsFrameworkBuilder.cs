@@ -47,11 +47,38 @@ namespace WenRarityLibrary.Builders
             sb.Append($"{OH(1, tabs)}using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;");
             sb.Append($"{OH(1, tabs)}using WenRarityLibrary.ADO.Rime;");
             sb.Append($"{OH(1, tabs)}using WenRarityLibrary.ADO.Rime.Models.Rarity.Token;");
+            sb.Append($"{OH(1, tabs)}using WenRarityLibrary.Utils;");
             sb.Append($"{OH(1, tabs)}");
             sb.Append($"{OH(2, tabs)}namespace Stats.Builders");
             sb.Append($"{OH(1, tabs)}" + "{");
             sb.Append($"{OH(1, ++tabs)}public class {collection.Name}StatsHandler : BaseStatsHandler");
             sb.Append($"{OH(1, tabs)}" + "{");
+            sb.Append($"{OH(1, tabs)}static WenRarityFileIO _fileIO = WenRarityFileIO.Instance;");
+
+            // Handler
+            string handlerMethod = Method_Handler(tabs, collection, stats);
+            sb.Append(handlerMethod);
+
+            // GenerateCollectionRarity_SQL
+            string generateCollectionRarity_SQL = Method_GenerateCollectionRarity_SQL(tabs, collection, stats);
+            sb.Append(generateCollectionRarity_SQL);
+
+            // RarityChart
+            string rarityChart = Method_RarityChart(tabs, collection, stats);
+            sb.Append(rarityChart);
+
+            sb.Append($"{OH(1, tabs)}" + "}");
+            sb.Append($"{OH(1, --tabs)}" + "}");
+
+            _fileIO.Write(sb.ToString(), fileLoc);
+        }
+
+            //sb.Append($"{OH(1, tabs)}");
+
+
+        private string Method_Handler(int tabs, Collection collection, StatsContainer stats)
+        {
+            StringBuilder sb = new StringBuilder();
 
             // Handle
             sb.Append($"{OH(2, ++tabs)}public override void Handle()");
@@ -125,7 +152,13 @@ namespace WenRarityLibrary.Builders
             sb.Append($"{OH(1, --tabs)}" + "}");
             sb.Append($"{OH(1, --tabs)}" + "}");
 
-            // GenerateCollectionRarity_SQL
+            return sb.ToString();
+        }
+
+        private string Method_GenerateCollectionRarity_SQL(int tabs, Collection collection, StatsContainer stats)
+        {
+            StringBuilder sb = new StringBuilder();
+
             sb.Append($"{OH(2, tabs)}public override void GenerateCollectionRarity_SQL()");
             sb.Append($"{OH(1, tabs)}" + "{");
             sb.Append($"{OH(1, ++tabs)}using RimeADO rimeContext = new();");
@@ -180,7 +213,7 @@ namespace WenRarityLibrary.Builders
             sb.Append($"{OH(2, tabs)}rimeContext.{collection.Name}Rarity.AddRange(rimeItems);");
             sb.Append($"{OH(1, tabs)}trans.Commit();");
             sb.Append($"{OH(1, tabs)}rimeContext.SaveChanges();");
-            sb.Append($"{OH(2, tabs)}_ducky.Info($\"Created rarity table for {collection.Name}.\");") ;
+            sb.Append($"{OH(2, tabs)}_ducky.Info($\"Created rarity table for {collection.Name}.\");");
             sb.Append($"{OH(1, --tabs)}" + "}");
             sb.Append($"{OH(1, tabs)}catch (Exception ex)");
             sb.Append($"{OH(1, tabs)}" + "{");
@@ -189,10 +222,68 @@ namespace WenRarityLibrary.Builders
             sb.Append($"{OH(1, tabs)}throw;");
             sb.Append($"{OH(1, --tabs)}" + "}");
             sb.Append($"{OH(1, --tabs)}" + "}");
-            sb.Append($"{OH(1, --tabs)}" + "}");
-            sb.Append($"{OH(1, --tabs)}" + "}");
 
-            _fileIO.Write(sb.ToString(), fileLoc);
+            return sb.ToString();
+        }
+
+        // sb.Append($"{OH(1, tabs)}");
+        private string Method_RarityChart(int tabs, Collection collection, StatsContainer stats)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append($"{OH(2, tabs)}public override void RarityChart()");
+            sb.Append($"{OH(1, tabs)}" + "{");
+            sb.Append($"{OH(1, ++tabs)}using RimeADO rimeContext = new();");
+            sb.Append($"{OH(1, tabs)}using BlockfrostADO bfContext = new();");
+            sb.Append($"{OH(1, tabs)}try");
+            sb.Append($"{OH(1, tabs)}" + "{");
+            sb.Append($"{OH(1, ++tabs)}var rimeItems = rimeContext.{collection.Name}Rarity.ToList();");
+            sb.Append($"{OH(1, tabs)}var bfItems = bfContext.{collection.Name}.ToList();");
+            sb.Append($"{OH(1, tabs)}var joined = rimeItems.Join(bfItems,");
+            sb.Append($"{OH(1, ++tabs)}rimeItem => rimeItem.asset,");
+            sb.Append($"{OH(1, tabs)}bfItem => bfItem.asset,");
+            sb.Append($"{OH(1, tabs)}(rimeItem, bfItem) => new");
+            sb.Append($"{OH(1, tabs++)}" + "{");
+
+            // Rank - Wrong, but makes it easier to replace in output.
+            sb.Append($"{OH(1, tabs)}Rank = 0,");
+
+            // Weighting
+            sb.Append($"{OH(1, tabs)}Weighting = rimeItem.weighting,");
+
+            // Name
+            sb.Append($"{OH(1, tabs)}Name = bfItem.name,");
+
+            // Joined Traits
+            foreach (var item in stats.traitsIncluded)
+            {
+                sb.Append($"{OH(1, tabs)}{item} = bfItem.{item},");
+                sb.Append($"{OH(1, tabs)}{item}Rarity = rimeItem.{item},");
+            }
+
+
+            sb.Append($"{OH(1, tabs)}");
+
+            // TraitCount
+            sb.Append($"{OH(1, tabs)}TraitCount = bfItem.traitCount,");
+            sb.Append($"{OH(1, tabs)}TraitCountRarity = rimeItem.traitCount,");
+
+            // Asset
+            sb.Append($"{OH(1, tabs)}Asset = bfItem.asset");
+            
+            sb.Append($"{OH(1, --tabs)}" + "});");
+            sb.Append($"{OH(2, tabs)}var ordered = joined.OrderByDescending(joined => joined.Weighting);");
+            sb.Append($"{OH(1, tabs)}_fileIO.Write_CSV(ordered, _csvDir + \"{collection.Name}.csv\");");
+            sb.Append($"{OH(1, --tabs)}" + "}");
+            sb.Append($"{OH(1, tabs)}catch (Exception ex)");
+            sb.Append($"{OH(1, tabs++)}" + "{");
+            sb.Append($"{OH(1, tabs)}_ducky.Error(\"{collection.Name}StatsHandler\", \"RarityChart\", ex.Message);");
+            sb.Append($"{OH(1, tabs)}throw;");
+            sb.Append($"{OH(1, --tabs)}" + "}");
+            sb.Append($"{OH(1, --tabs)}" + "}");
+            
+            
+            return sb.ToString();
         }
 
         /// <summary>
@@ -221,6 +312,7 @@ namespace WenRarityLibrary.Builders
                 newTextsb.Append($"{OH(1, tabs)}_statsHandler.handler = new {collection.Name}StatsHandler();");
                 newTextsb.Append($"{OH(1, tabs)}_statsHandler.handler.Handle();");
                 newTextsb.Append($"{OH(1, tabs)}_statsHandler.handler.GenerateCollectionRarity_SQL();");
+                newTextsb.Append($"{OH(1, tabs)}_statsHandler.handler.RarityChart();");
                 newTextsb.Append($"{OH(1, tabs--)}break;");
                 newTextsb.Append($"{OH(1, tabs)}{_marker}{collection.Name}-");// END MARKER
 

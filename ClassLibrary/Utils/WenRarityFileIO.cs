@@ -1,4 +1,7 @@
-﻿namespace WenRarityLibrary.Builders
+﻿using CsvHelper;
+using System.Globalization;
+
+namespace WenRarityLibrary.Utils
 {
     public class WenRarityFileIO
     {
@@ -30,6 +33,15 @@
             {
                 using StreamReader sr = new StreamReader(fileLoc);
                 fileText = sr.ReadToEnd();
+            }
+        }
+
+        public void Write_CSV(IEnumerable<object> ordered, string csvDir)
+        {
+            using (var writer = new StreamWriter(csvDir))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(ordered);
             }
         }
     }

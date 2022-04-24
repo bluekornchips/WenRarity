@@ -31,6 +31,10 @@ namespace Blockfrost.Builder
         private string _type = "DefaultOnChainMetaData";
         private Collection _collection = new Collection();
 
+        /// <summary>
+        /// Build the collection and neccesary files.
+        /// </summary>
+        /// <param name="collection"></param>
         public void Build(Collection collection)
         {
             _collection = collection;
@@ -45,16 +49,35 @@ namespace Blockfrost.Builder
                     return;
                 };
             }
+        }
 
-            if (_blockfrostController.CollectionExists(_collection.PolicyId))
-            {
-                _blockfrostController.DeleteTokenTable(collection);
-            }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="resetJson"></param>
+        public void Retrieve(Collection collection, bool resetJson = false)
+        {
+            _collection = collection;
+            _type = _collection.Name;
 
             ExistingRecords();
+
+            if (resetJson) JsonReset();
+
             RetrieveJson();
         }
 
+        /// <summary>
+        /// Reset the json for the collection. An easy helper method for resetting local state to match when onchain changes from manual intervention.
+        /// </summary>
+        private void JsonReset()
+        {
+            List<BlockfrostItemJson> jsonItems = new();
+            _blockfrostController.JsonRetrieve(_collection, out jsonItems);
+            _blockfrostController.JsonClearCollectionInfo(jsonItems);
+            _assets.Clear();
+        }
 
         /// <summary>
         /// Create a new Collection
@@ -102,7 +125,7 @@ namespace Blockfrost.Builder
         /// <summary>
         /// Get existing records, if any.
         /// </summary>
-        public void ExistingRecords()
+        private void ExistingRecords()
             => _blockfrostController.GetOnChainMetaDataAsModel(_collection.Name, out _assets);
 
         /// <summary>
@@ -111,7 +134,7 @@ namespace Blockfrost.Builder
         /// <param name="asset"></param>
         /// <param name="json"></param>
         /// <returns></returns>
-        public bool ExistingJson(string asset, out string json)
+        private bool ExistingJson(string asset, out string json)
         {
             json = "";
             _blockfrostController.JsonGetOne(asset, out BlockfrostItemJson item);
@@ -123,7 +146,7 @@ namespace Blockfrost.Builder
         /// <summary>
         /// Retrieve the assets json from either the local database copy or from blockfrostapi.
         /// </summary>
-        public void RetrieveJson()
+        private void RetrieveJson()
         {
             bool retrieved = false;
             int page = 0;

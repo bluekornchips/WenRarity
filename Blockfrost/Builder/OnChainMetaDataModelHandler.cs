@@ -10,7 +10,26 @@ namespace Blockfrost.Builder
         public static OnChainMetaDataModelHandler Instance => instance ?? (instance = new OnChainMetaDataModelHandler());
         private OnChainMetaDataModelHandler() { }
 
-        private static Ducky _ducky = Ducky.Instance;//##_://##_:DeadRabbits+
+        private static Ducky _ducky = Ducky.Instance;//##_:
+		//##_:TavernSquad+
+		public void Add(TavernSquad item)
+		{
+			using BlockfrostADO context = new();
+			var trans = context.Database.BeginTransaction();
+			try
+			{
+				context.TavernSquad.Add(item);
+				trans.Commit();
+				context.SaveChanges();
+			}
+			catch (Exception ex)
+			{
+				trans.Rollback();
+				_ducky.Error("OnChainMetaDataModelHandler", "Add(TavernSquad)", ex.Message);
+			}
+		}
+		//##_:TavernSquad-
+		//##_:DeadRabbits+
 		public void Add(DeadRabbits item)
 		{
 			using BlockfrostADO context = new();
@@ -84,3 +103,6 @@ namespace Blockfrost.Builder
 		//##_:KBot-
     }
 }
+
+
+

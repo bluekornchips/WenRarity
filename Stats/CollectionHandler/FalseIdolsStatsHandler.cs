@@ -184,5 +184,10 @@ namespace Stats.Builders
 				throw;
 			}
 		}
-	}
+
+        public override void RarityChart()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

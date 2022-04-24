@@ -7,6 +7,31 @@ namespace WenRarityLibrary.ADO.Rime
     {
         public RimeADO() : base("Rime") { }
         //##_:
+		//##_:TavernSquad+
+		public virtual DbSet<TavernSquadRarity> TavernSquadRarity { get; set; }
+		public virtual DbSet<TavernSquadTraitCount> TavernSquadTraitCount{ get; set; }
+		public virtual DbSet<TavernSquadBack> TavernSquadBack { get; set; }
+		public virtual DbSet<TavernSquadEyes> TavernSquadEyes { get; set; }
+		public virtual DbSet<TavernSquadFace> TavernSquadFace { get; set; }
+		public virtual DbSet<TavernSquadHead> TavernSquadHead { get; set; }
+		public virtual DbSet<TavernSquadRace> TavernSquadRace { get; set; }
+		public virtual DbSet<TavernSquadArmor> TavernSquadArmor { get; set; }
+		public virtual DbSet<TavernSquadMouth> TavernSquadMouth { get; set; }
+		public virtual DbSet<TavernSquadRacial> TavernSquadRacial { get; set; }
+		public virtual DbSet<TavernSquadFamiliar> TavernSquadFamiliar { get; set; }
+		public virtual DbSet<TavernSquadSkinTone> TavernSquadSkinTone { get; set; }
+		public virtual DbSet<TavernSquadBackground> TavernSquadBackground { get; set; }
+		//##_:TavernSquad-
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		//##_:FalseIdols+
 		public virtual DbSet<FalseIdolsRarity> FalseIdolsRarity { get; set; }
 		public virtual DbSet<FalseIdolsTraitCount> FalseIdolsTraitCount{ get; set; }

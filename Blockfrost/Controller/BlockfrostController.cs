@@ -75,6 +75,46 @@ namespace Blockfrost.Controller
             }
         }
 
+        public void JsonRetrieve(Collection collection, out List<BlockfrostItemJson> items)
+        {
+            using BlockfrostADO context = new();
+            var trans = context.Database.BeginTransaction();
+            {
+                try
+                {
+                    items = context.BlockfrostItemJson.Where(item => item.policy_id == collection.PolicyId).ToList();
+                    context.SaveChanges();
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    _ducky.Critical("BlockfrostController", "JsonAdd", ex.Message);
+                    throw;
+                }
+            }
+        }
+
+        public void JsonClearCollectionInfo(List<BlockfrostItemJson> items)
+        {
+            using BlockfrostADO context = new();
+            var trans = context.Database.BeginTransaction();
+            {
+                try
+                {
+                    context.BlockfrostItemJson.RemoveRange(items);
+                    context.SaveChanges();
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    _ducky.Critical("BlockfrostController", "JsonAdd", ex.Message);
+                    throw;
+                }
+            }
+        }
+
         /// <summary>
         /// Returns the in database json for a single item.
         /// </summary>
@@ -161,6 +201,13 @@ namespace Blockfrost.Controller
                 switch (collection)
                 {
                     //##_:
+					//##_:TavernSquad+
+					case "TavernSquad" :
+						var foundTavernSquad = context.TavernSquad.ToList();
+						foreach (var item in foundTavernSquad) items.Add(item.asset, item);
+						break;
+					//##_:TavernSquad-
+					
 					//##_:DeadRabbits+
 					case "DeadRabbits" :
 						var foundDeadRabbits = context.DeadRabbits.ToList();
@@ -197,5 +244,8 @@ namespace Blockfrost.Controller
         }
     }
 }
+
+
+
 
 

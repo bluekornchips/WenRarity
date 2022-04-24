@@ -87,7 +87,7 @@ namespace WenRarityLibrary.Builders
 
                 if (safeValue != "EMPTY" && safeValue != "NONE" && value != "" && !string.IsNullOrEmpty(safeValue))
                 {
-                    built.model.traitCount++;
+                    if(!CollectionSpecificOverride(safeValue)) built.model.traitCount++;
                 }
             }
         }
@@ -157,6 +157,10 @@ namespace WenRarityLibrary.Builders
         {
             switch (type)
             {//##_:switch+
+				//##_:TavernSquad+
+				case "TavernSquad":return HandleTavernSquad(json);
+				//##_:TavernSquad-
+				
 				//##_:DeadRabbits+
 				case "DeadRabbits":return HandleDeadRabbits(json);
 				//##_:DeadRabbits-//##_:FalseIdols+
@@ -172,7 +176,27 @@ namespace WenRarityLibrary.Builders
             }
         }
 
-        #region Handler//##_:handle+//##_:DeadRabbits+
+        #region Handler//##_:handle+
+		//##_:TavernSquad+
+		private TavernSquad HandleTavernSquad(string json)
+		{
+			TavernSquad model = JsonConvert.DeserializeObject<TavernSquad>(json);
+			model.Back = model.attributes.GetValueOrDefault("Back");
+			model.Eyes = model.attributes.GetValueOrDefault("Eyes");
+			model.Face = model.attributes.GetValueOrDefault("Face");
+			model.Head = model.attributes.GetValueOrDefault("Head");
+			model.Race = model.attributes.GetValueOrDefault("Race");
+			model.Armor = model.attributes.GetValueOrDefault("Armor");
+			model.Mouth = model.attributes.GetValueOrDefault("Mouth");
+			model.Racial = model.attributes.GetValueOrDefault("Racial");
+			model.Familiar = model.attributes.GetValueOrDefault("Familiar");
+			model.SkinTone = model.attributes.GetValueOrDefault("SkinTone");
+			model.Background = model.attributes.GetValueOrDefault("Background");
+			return model;
+		}
+
+		//##_:TavernSquad-
+		//##_:DeadRabbits+
 		private DeadRabbits HandleDeadRabbits(string json)
 		{
 			DeadRabbits model = JsonConvert.DeserializeObject<DeadRabbits>(json);
@@ -212,5 +236,15 @@ namespace WenRarityLibrary.Builders
         //##_:KBot-
 
         #endregion Hand;er
+
+        private bool CollectionSpecificOverride(string value)
+        {
+            return false;
+        }
     }
 }
+
+
+
+
+

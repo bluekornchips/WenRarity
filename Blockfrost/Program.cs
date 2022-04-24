@@ -52,6 +52,14 @@ collection = new Collection()
     RealName = "False Idols"
 };
 
+collection = new Collection()
+{
+    PolicyId = "2d01b3496fd22b1a61e6227c27250225b1186e5ebae7360b1fc5392c",
+    Name = "TavernSquad",
+    DatabaseName = "TavernSquad",
+    RealName = "Tavern Squad"
+};
 
 
-bb.Build(collection);
+//bb.Build(collection);
+bb.Retrieve(collection, true);
