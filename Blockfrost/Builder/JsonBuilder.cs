@@ -1,9 +1,9 @@
+using BlockfrostLibrary.ADO;
+using BlockfrostLibrary.ADO.Models.OnChainMetaData;
+using BlockfrostLibrary.ADO.Models.OnChainMetaData.Token;
+using BlockfrostLibrary.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using WenRarityLibrary.ADO.Blockfrost;
-using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData;
-using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData.Token;
-using WenRarityLibrary.ViewModels;
 
 namespace WenRarityLibrary.Builders
 {
@@ -69,14 +69,14 @@ namespace WenRarityLibrary.Builders
                 string lower = property.Name.ToLower();
 
                 // Id - safety check.
-                if (lower.Equals("id")) built.attributes.Add("str_" + property.Name.Replace(" ", ""), property.Value.ToString());
-                else
-                {
+                //if (lower.Equals("id")) built.attributes.Add("str_" + property.Name.Replace(" ", ""), property.Value.ToString());
+                //else
+                //{
                     AttributeHelper(property, out bool valid);
                     string value = AttributeCleaner(property.Value.ToString());
                     string safeName = property.Name.Replace(" ", ""); // Replace spaces
                     if (valid) built.attributes.Add(safeName, value);
-                }
+                //}
             }
 
             // Trait Counter
@@ -156,27 +156,17 @@ namespace WenRarityLibrary.Builders
         private OnChainMetaData GenerateOnChainMetaData(string type, string json)
         {
             switch (type)
-            {//##_:switch+
+            {
+                //##_:switch+
 				//##_:TavernSquad+
 				case "TavernSquad":return HandleTavernSquad(json);
 				//##_:TavernSquad-
-				
-				//##_:DeadRabbits+
-				case "DeadRabbits":return HandleDeadRabbits(json);
-				//##_:DeadRabbits-//##_:FalseIdols+
-				case "FalseIdols":return HandleFalseIdols(json);
-				//##_:FalseIdols-
-				//##_:PuurrtyCatsSociety+
-				case "PuurrtyCatsSociety":return HandlePuurrtyCatsSociety(json);
-				//##_:PuurrtyCatsSociety-
-				//##_:KBot+
-				case "KBot":return HandleKBot(json);
-				//##_:KBot-
                 default: return new DefaultOnChainMetaData();
             }
         }
 
-        #region Handler//##_:handle+
+        #region Handler
+        //##_:handle+
 		//##_:TavernSquad+
 		private TavernSquad HandleTavernSquad(string json)
 		{
@@ -196,46 +186,8 @@ namespace WenRarityLibrary.Builders
 		}
 
 		//##_:TavernSquad-
-		//##_:DeadRabbits+
-		private DeadRabbits HandleDeadRabbits(string json)
-		{
-			DeadRabbits model = JsonConvert.DeserializeObject<DeadRabbits>(json);
-			return model;
-		}
 
-		//##_:DeadRabbits-//##_:FalseIdols+
-		private FalseIdols HandleFalseIdols(string json)
-		{
-			FalseIdols model = JsonConvert.DeserializeObject<FalseIdols>(json);
-			model.Back = model.attributes.GetValueOrDefault("Back");
-			model.Face = model.attributes.GetValueOrDefault("Face");
-			model.Head = model.attributes.GetValueOrDefault("Head");
-			model.Outfit = model.attributes.GetValueOrDefault("Outfit");
-			model.Character = model.attributes.GetValueOrDefault("Character");
-			model.Background = model.attributes.GetValueOrDefault("Background");
-			return model;
-		}
-		//##_:FalseIdols-
-		
-		
-		//##_:PuurrtyCatsSociety+
-		private PuurrtyCatsSociety HandlePuurrtyCatsSociety(string json)
-		{
-			PuurrtyCatsSociety model = JsonConvert.DeserializeObject<PuurrtyCatsSociety>(json);
-			return model;
-		}
-
-		//##_:PuurrtyCatsSociety-
-		//##_:KBot+
-		private KBot HandleKBot(string json)
-		{
-			KBot model = JsonConvert.DeserializeObject<KBot>(json);
-			model.Pet = model.attributes.GetValueOrDefault("Pet");
-			return model;
-		}
-        //##_:KBot-
-
-        #endregion Hand;er
+        #endregion Handler
 
         private bool CollectionSpecificOverride(string value)
         {
@@ -243,8 +195,3 @@ namespace WenRarityLibrary.Builders
         }
     }
 }
-
-
-
-
-

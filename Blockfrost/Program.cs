@@ -1,9 +1,9 @@
 ﻿using Blockfrost.Builder;
-using WenRarityLibrary.ADO.Blockfrost.Models;
+using BlockfrostLibrary.ADO.Models.Collection;
 
 BlockfrostBuilder bb = BlockfrostBuilder.Instance;
 
-var collection = new Collection()
+var collection = new BlockfrostCollection()
 {
     PolicyId = "3f00d83452b4ead45cf5e0ca811fe8da561dfc45a5e414c88c4d8759",
     Name = "KBot",
@@ -36,7 +36,7 @@ var collection = new Collection()
 //    RealName = "Invisible Buddies"
 //};
 
-collection = new Collection()
+collection = new BlockfrostCollection()
 {
     PolicyId = "de2340edc45629456bf695200e8ea32f948a653b21ada10bc6f0c554",
     Name = "DeadRabbits",
@@ -44,7 +44,7 @@ collection = new Collection()
     RealName = "Dead Rabbit Resurrection Society"
 };
 
-collection = new Collection()
+collection = new BlockfrostCollection()
 {
     PolicyId = "76d51276ff5d4616fa87fe5e398f09110e9f085a26b44f07130b57a9",
     Name = "FalseIdols",
@@ -52,7 +52,7 @@ collection = new Collection()
     RealName = "False Idols"
 };
 
-collection = new Collection()
+collection = new BlockfrostCollection()
 {
     PolicyId = "2d01b3496fd22b1a61e6227c27250225b1186e5ebae7360b1fc5392c",
     Name = "TavernSquad",
@@ -61,5 +61,5 @@ collection = new Collection()
 };
 
 
-//bb.Build(collection);
-bb.Retrieve(collection, true);
+bb.Build(collection);
+bb.Retrieve(collection);

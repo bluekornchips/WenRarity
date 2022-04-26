@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlockfrostLibrary\BlockfrostLibrary.csproj" />
-    <ProjectReference Include="..\WenRarityLibrary\WenRarityLibrary.csproj" />
+    <ProjectReference Include="..\Blockfrost\Blockfrost.csproj" />
+    <ProjectReference Include="..\RimeLibrary\RimeLibrary.csproj" />
   </ItemGroup>
 
 </Project>

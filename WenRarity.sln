@@ -8,11 +8,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WenRarityLibrary", "ClassLibrary\WenRarityLibrary.csproj", "{04AF1DC7-062C-46BC-B925-D69DBCCCBD54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WenRarityLibrary", "WenRarityLibrary\WenRarityLibrary.csproj", "{04AF1DC7-062C-46BC-B925-D69DBCCCBD54}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blockfrost", "Blockfrost\Blockfrost.csproj", "{0EDFE36D-00BC-4853-B613-0C220E467EB4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stats", "Stats\Stats.csproj", "{B40E949E-7798-4D46-8C06-AD8848FE5650}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rime", "Rime\Rime.csproj", "{B40E949E-7798-4D46-8C06-AD8848FE5650}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockfrostLibrary", "BlockfrostLibrary\BlockfrostLibrary.csproj", "{48C60F35-34AC-4AE8-AF85-DB7667D91FA3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimeLibrary", "RimeLibrary\RimeLibrary.csproj", "{5AFB191A-53B6-4741-9916-EA3573D71810}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +36,14 @@ Global
 		{B40E949E-7798-4D46-8C06-AD8848FE5650}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B40E949E-7798-4D46-8C06-AD8848FE5650}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B40E949E-7798-4D46-8C06-AD8848FE5650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48C60F35-34AC-4AE8-AF85-DB7667D91FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48C60F35-34AC-4AE8-AF85-DB7667D91FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48C60F35-34AC-4AE8-AF85-DB7667D91FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48C60F35-34AC-4AE8-AF85-DB7667D91FA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AFB191A-53B6-4741-9916-EA3573D71810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AFB191A-53B6-4741-9916-EA3573D71810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AFB191A-53B6-4741-9916-EA3573D71810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AFB191A-53B6-4741-9916-EA3573D71810}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

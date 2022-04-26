@@ -1,11 +1,12 @@
 ﻿using Blockfrost.Controller;
-using WenRarityLibrary.ADO.Blockfrost;
-using WenRarityLibrary.ADO.Blockfrost.Models;
 using WenRarityLibrary.Builders;
-using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData;
-using WenRarityLibrary.API;
-using WenRarityLibrary.ViewModels;
 using WenRarityLibrary;
+using BlockfrostLibrary.API;
+using BlockfrostLibrary.ADO.Models.OnChainMetaData;
+using BlockfrostLibrary.ADO.Models.Collection;
+using BlockfrostLibrary.ADO;
+using BlockfrostLibrary.Builders;
+using BlockfrostLibrary.ViewModels;
 
 namespace Blockfrost.Builder
 {
@@ -24,26 +25,24 @@ namespace Blockfrost.Builder
         BlockfrostController _blockfrostController = BlockfrostController.Instance;
         JsonBuilder _jsonBuilder = JsonBuilder.Instance;
         BlockfrostAPI _blockfrostAPI = BlockfrostAPI.Instance;
+        BlockfrostFrameworkBuilder _bffb = BlockfrostFrameworkBuilder.Instance;
         OnChainMetaDataModelHandler _onChainMetaDataModelHandler = OnChainMetaDataModelHandler.Instance;
-        FrameworkDirector frameworkDirector = FrameworkDirector.Instance;
 
         private Dictionary<string, OnChainMetaData> _assets = new();
         private string _type = "DefaultOnChainMetaData";
-        private Collection _collection = new Collection();
+        private BlockfrostCollection _collection = new BlockfrostCollection();
 
         /// <summary>
         /// Build the collection and neccesary files.
         /// </summary>
         /// <param name="collection"></param>
-        public void Build(Collection collection)
+        public void Build(BlockfrostCollection collection, bool overwrite = false)
         {
             _collection = collection;
             _type = _collection.Name;
 
             if (!_blockfrostController.CollectionExists(_collection.PolicyId))
             {
-                bool overwrite = false;
-
                 if (NewCollection(overwrite))
                 {
                     return;
@@ -56,7 +55,7 @@ namespace Blockfrost.Builder
         /// </summary>
         /// <param name="collection"></param>
         /// <param name="resetJson"></param>
-        public void Retrieve(Collection collection, bool resetJson = false)
+        public void Retrieve(BlockfrostCollection collection, bool resetJson = false)
         {
             _collection = collection;
             _type = _collection.Name;
@@ -93,6 +92,9 @@ namespace Blockfrost.Builder
         /// <exception cref="Exception"></exception>
         private bool NewCollection(bool overwrite = false)
         {
+            // Clear existing data, if specified
+            if (overwrite) ClearTableRecords();
+
             // Get a sample of the data from the first page.
             _blockfrostAPI.Assets_ByPolicy(_collection.PolicyId, 1, out string policyJson);
             
@@ -112,13 +114,13 @@ namespace Blockfrost.Builder
             _jsonBuilder.AsCIPStandardModel(assetJson, _type, out OnChainMetaDataViewModel vm);
 
             // Create the framework token.
-            frameworkDirector.bf.CreateToken(_collection, vm, overwrite, out bool isNewCollection);
+            _bffb.CreateToken(_collection, vm, overwrite, out bool isNewCollection);
 
             // Add the collection to the db.
             _blockfrostController.AddCollection(_collection);
 
             // Complain if any errors.
-            if (!frameworkDirector.bf.Build(_collection, vm)) throw new Exception("");
+            if (!_bffb.Build(_collection, vm)) throw new Exception("");
             return isNewCollection;
         }
 
@@ -127,6 +129,12 @@ namespace Blockfrost.Builder
         /// </summary>
         private void ExistingRecords()
             => _blockfrostController.GetOnChainMetaDataAsModel(_collection.Name, out _assets);
+
+        /// <summary>
+        /// Clear all the records for the given table.
+        /// </summary>
+        private void ClearTableRecords()
+            => _blockfrostController.DeleteTokenTable(_collection);
 
         /// <summary>
         /// Checks if we have a local copy of the json and returns it and a true value.

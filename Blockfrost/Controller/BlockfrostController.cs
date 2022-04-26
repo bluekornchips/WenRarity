@@ -1,7 +1,7 @@
+using BlockfrostLibrary.ADO;
+using BlockfrostLibrary.ADO.Models.Collection;
+using BlockfrostLibrary.ADO.Models.OnChainMetaData;
 using WenRarityLibrary;
-using WenRarityLibrary.ADO.Blockfrost;
-using WenRarityLibrary.ADO.Blockfrost.Models;
-using WenRarityLibrary.ADO.Blockfrost.Models.OnChainMetaData;
 
 namespace Blockfrost.Controller
 {
@@ -17,7 +17,7 @@ namespace Blockfrost.Controller
         /// Add the Collection item to the Collection Table
         /// </summary>
         /// <param name="item"></param>
-        public void AddCollection(Collection item)
+        public void AddCollection(BlockfrostCollection item)
         {
             using BlockfrostADO context = new();
             var trans = context.Database.BeginTransaction();
@@ -50,6 +50,13 @@ namespace Blockfrost.Controller
             return context.Collection.Where(i => i.PolicyId == policyId).Any();
         }
 
+
+        public void CollectionByName(string name, out BlockfrostCollection collection)
+        {
+            using BlockfrostADO context = new();
+            collection = context.Collection.Where(i => i.Name == name).FirstOrDefault();
+        }
+
         /// <summary>
         /// Add the full json data to the database.
         /// Allows prevention of future Blockfrost calls.
@@ -75,7 +82,7 @@ namespace Blockfrost.Controller
             }
         }
 
-        public void JsonRetrieve(Collection collection, out List<BlockfrostItemJson> items)
+        public void JsonRetrieve(BlockfrostCollection collection, out List<BlockfrostItemJson> items)
         {
             using BlockfrostADO context = new();
             var trans = context.Database.BeginTransaction();
@@ -89,7 +96,7 @@ namespace Blockfrost.Controller
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    _ducky.Critical("BlockfrostController", "JsonAdd", ex.Message);
+                    _ducky.Critical("BlockfrostController", "JsonRetrieve", ex.Message);
                     throw;
                 }
             }
@@ -97,21 +104,39 @@ namespace Blockfrost.Controller
 
         public void JsonClearCollectionInfo(List<BlockfrostItemJson> items)
         {
+            //using BlockfrostADO context = new();
+            //var trans = context.Database.BeginTransaction();
+            //{
+            //    try
+            //    {
+            //        context.BlockfrostItemJson.RemoveRange(items);
+            //        trans.Commit();
+            //        context.SaveChanges();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        trans.Rollback();
+            //        _ducky.Critical("BlockfrostController", "JsonClearCollectionInfo", ex.Message);
+            //        throw;
+            //    }
+            //}
             using BlockfrostADO context = new();
-            var trans = context.Database.BeginTransaction();
+            var dbContextTransaction = context.Database.BeginTransaction();
+            try
             {
-                try
-                {
-                    context.BlockfrostItemJson.RemoveRange(items);
-                    context.SaveChanges();
-                    trans.Commit();
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    _ducky.Critical("BlockfrostController", "JsonAdd", ex.Message);
-                    throw;
-                }
+                context.Database.ExecuteSqlCommand($"DELETE FROM [Blockfrost].[dbo].[BlockfrostItemJson];");
+                context.Database.ExecuteSqlCommand($"DBCC CHECKIDENT ('BlockfrostItemJson', RESEED, 0);");
+
+                context.SaveChanges();
+                dbContextTransaction.Commit();
+
+                _ducky.Info($"Removed Asset records.");
+            }
+            catch (Exception ex)
+            {
+                _ducky.Critical("BlockfrostController", "JsonClearCollectionInfo", ex.Message);
+                dbContextTransaction.Rollback();
+                throw;
             }
         }
 
@@ -130,7 +155,7 @@ namespace Blockfrost.Controller
             }
             catch (Exception ex)
             {
-                _ducky.Error("BlockfrostController", "JsonGetAll", ex.Message);
+                _ducky.Error("BlockfrostController", "JsonGetOne", ex.Message);
             }
         }
 
@@ -138,7 +163,7 @@ namespace Blockfrost.Controller
         /// Helper method for deleting a collection.
         /// </summary>
         /// <param name="collection"></param>
-        public void DeleteTokenTable(Collection collection)
+        public void DeleteTokenTable(BlockfrostCollection collection)
         {
             using BlockfrostADO context = new();
             var dbContextTransaction = context.Database.BeginTransaction();
@@ -155,7 +180,7 @@ namespace Blockfrost.Controller
             }
             catch (Exception ex)
             {
-                _ducky.Critical("BlockfrostController", "Reset", ex.Message);
+                _ducky.Critical("BlockfrostController", "DeleteTokenTable", ex.Message);
                 dbContextTransaction.Rollback();
                 throw;
             }
@@ -207,31 +232,6 @@ namespace Blockfrost.Controller
 						foreach (var item in foundTavernSquad) items.Add(item.asset, item);
 						break;
 					//##_:TavernSquad-
-					
-					//##_:DeadRabbits+
-					case "DeadRabbits" :
-						var foundDeadRabbits = context.DeadRabbits.ToList();
-						foreach (var item in foundDeadRabbits) items.Add(item.asset, item);
-						break;
-					//##_:DeadRabbits-
-					//##_:FalseIdols+
-					case "FalseIdols" :
-						var foundFalseIdols = context.FalseIdols.ToList();
-						foreach (var item in foundFalseIdols) items.Add(item.asset, item);
-						break;
-					//##_:FalseIdols-
-					//##_:PuurrtyCatsSociety+
-					case "PuurrtyCatsSociety" :
-						var foundPuurrtyCatsSociety = context.PuurrtyCatsSociety.ToList();
-						foreach (var item in foundPuurrtyCatsSociety) items.Add(item.asset, item);
-						break;
-					//##_:PuurrtyCatsSociety-
-					//##_:KBot+
-					case "KBot" :
-						var foundKBot = context.KBot.ToList();
-						foreach (var item in foundKBot) items.Add(item.asset, item);
-						break;
-					//##_:KBot-
                     default:
                         break;
                 }
@@ -244,8 +244,3 @@ namespace Blockfrost.Controller
         }
     }
 }
-
-
-
-
-
